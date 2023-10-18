@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "87296BD7-9717-4908-B9EB-EC5045AC1BF4"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9524CF0E-C65C-4824-8580-982B024CD7F7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "astWeatherApp/Services/Network/NetworkManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
+            landmarkName = "loadWeather(requestType:requestWithData:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "9524CF0E-C65C-4824-8580-982B024CD7F7 - 72d36475cd88426d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "astWeatherApp.NetworkManager.loadWeather(requestType: astWeatherApp.RequestType, requestWithData: astWeatherApp.RequestWeatherWithData) -&gt; Combine.AnyPublisher&lt;astWeatherApp.WeatherDataModel, Swift.Error&gt;"
+                  moduleName = "astWeatherApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artemturmorezov/Documents/astWeatherApp/astWeatherApp/Services/Network/NetworkManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "38"
+                  endingLineNumber = "38"
+                  offsetFromSymbolStart = "1316">
+               </Location>
+               <Location
+                  uuid = "9524CF0E-C65C-4824-8580-982B024CD7F7 - 72d36475cd88426d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "astWeatherApp.NetworkManager.loadWeather(requestType: astWeatherApp.RequestType, requestWithData: astWeatherApp.RequestWeatherWithData) -&gt; Combine.AnyPublisher&lt;astWeatherApp.WeatherDataModel, Swift.Error&gt;"
+                  moduleName = "astWeatherApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artemturmorezov/Documents/astWeatherApp/astWeatherApp/Services/Network/NetworkManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "38"
+                  endingLineNumber = "38"
+                  offsetFromSymbolStart = "1324">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
