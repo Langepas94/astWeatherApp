@@ -8,13 +8,17 @@
 import UIKit
 import Combine
 import SnapKit
+import CoreLocation
 
 class MainWeatherScreen: UIViewController {
     
-    let viewModel = WeatherViewModel()
-    var cancellables: Set<AnyCancellable> = []
+    // MARK: - Variables
     
+    var viewModel: IMainScreenWeatherViewModel
+    var cancellables: Set<AnyCancellable> = []
+    let locationManager = CLLocationManager()
     var data: WeatherModel = WeatherModel()
+    var name: String?
     
     let cityNameLabel: UILabel = {
         let label = UILabel()
@@ -45,16 +49,40 @@ class MainWeatherScreen: UIViewController {
     private let weekTable: UITableView = {
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
-        table.register(FutureTimeWeatherCell.self, forCellReuseIdentifier: FutureTimeWeatherCell.id)
+        table.register(WeekWeatherCell.self, forCellReuseIdentifier: WeekWeatherCell.id)
         table.separatorStyle = .none
         table.showsVerticalScrollIndicator = false
         return table
     }()
     
+    
+    // MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        dataType()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         setupUI()
         uiUpdate()
+        
+    }
+    
+    func dataType() {
+        switch viewModel.type {
+        case .city(let city):
+            viewModel.loadWeather(city)
+        case .geo:
+            requestGeoSwitcher()
+        }
+    }
+    
+    init(viewModel: IMainScreenWeatherViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -64,8 +92,9 @@ extension MainWeatherScreen {
     
     func configureScreenData() {
         self.cityNameLabel.text = data.cityName
-        self.degreesLabel.text = "\(String(describing: data.nowDegrees))"
+        self.degreesLabel.text = "\(String(describing: data.nowDegrees))" + "°C"
         self.descriptionWeatherLabel.text = data.description
+        self.weekTable.reloadData()
     }
     
     func setupUI() {
@@ -79,7 +108,7 @@ extension MainWeatherScreen {
         
         cityNameLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(30)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(16)
         }
         
         degreesLabel.snp.makeConstraints { make in
@@ -96,9 +125,9 @@ extension MainWeatherScreen {
             make.top.equalTo(descriptionWeatherLabel.snp.bottom).offset(22)
             make.leading.equalToSuperview().offset(25)
             make.trailing.equalToSuperview().offset(-25)
-            
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
+        
     }
     
     func uiUpdate() {
@@ -106,23 +135,61 @@ extension MainWeatherScreen {
             .sink { dataModel in
                 self.data = dataModel
                 self.configureScreenData()
-                self.weekTable.reloadData()
             }
             .store(in: &cancellables)
     }
 }
 
+// MARK: - Setup Table
 extension MainWeatherScreen: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         data.weekData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = weekTable.dequeueReusableCell(withIdentifier: FutureTimeWeatherCell.id, for: indexPath) as? FutureTimeWeatherCell else {return UITableViewCell() }
+        guard let cell = weekTable.dequeueReusableCell(withIdentifier: WeekWeatherCell.id, for: indexPath) as? WeekWeatherCell else {return UITableViewCell() }
         
         cell.configure(item: data.weekData[indexPath.row])
         return cell
     }
+}
+
+extension MainWeatherScreen: CLLocationManagerDelegate {
     
+    func requestGeoAccess() {
+        locationManager.requestWhenInUseAuthorization()
+    }
     
+    func requestGeoSwitcher() {
+        
+        switch locationManager.authorizationStatus {
+            
+        case .notDetermined:
+            requestGeoAccess()
+            getGeo()
+        case .restricted:
+            requestGeoAccess()
+            getGeo()
+        case .denied:
+            requestGeoAccess()
+            getGeo()
+        case .authorizedAlways:
+            getGeo()
+        case .authorizedWhenInUse:
+            getGeo()
+        @unknown default:
+            requestGeoAccess()
+        }
+    }
+    
+    func getGeo() {
+        locationManager.startUpdatingLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            viewModel.loadWeather(location)
+            locationManager.stopUpdatingLocation()
+        }
+    }
 }

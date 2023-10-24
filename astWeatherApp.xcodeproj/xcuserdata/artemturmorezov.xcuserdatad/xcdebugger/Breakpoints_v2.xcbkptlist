@@ -7,49 +7,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9524CF0E-C65C-4824-8580-982B024CD7F7"
+            uuid = "155BFBDD-2281-4B6D-8521-190175097DFE"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "astWeatherApp/Services/Network/NetworkManager.swift"
+            filePath = "astWeatherApp/MainScreen/View/MainWeatherScreen.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
-            landmarkName = "loadWeather(requestType:requestWithData:)"
+            startingLineNumber = "119"
+            endingLineNumber = "119"
+            landmarkName = "uiUpdate()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "9524CF0E-C65C-4824-8580-982B024CD7F7 - 72d36475cd88426d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "astWeatherApp.NetworkManager.loadWeather(requestType: astWeatherApp.RequestType, requestWithData: astWeatherApp.RequestWeatherWithData) -&gt; Combine.AnyPublisher&lt;astWeatherApp.WeatherDataModel, Swift.Error&gt;"
-                  moduleName = "astWeatherApp"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/artemturmorezov/Documents/astWeatherApp/astWeatherApp/Services/Network/NetworkManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "38"
-                  endingLineNumber = "38"
-                  offsetFromSymbolStart = "1316">
-               </Location>
-               <Location
-                  uuid = "9524CF0E-C65C-4824-8580-982B024CD7F7 - 72d36475cd88426d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "astWeatherApp.NetworkManager.loadWeather(requestType: astWeatherApp.RequestType, requestWithData: astWeatherApp.RequestWeatherWithData) -&gt; Combine.AnyPublisher&lt;astWeatherApp.WeatherDataModel, Swift.Error&gt;"
-                  moduleName = "astWeatherApp"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/artemturmorezov/Documents/astWeatherApp/astWeatherApp/Services/Network/NetworkManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "38"
-                  endingLineNumber = "38"
-                  offsetFromSymbolStart = "1324">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EC156E57-E0FB-4C39-8F3F-B34E6AF411C3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "astWeatherApp/MainScreen/View/MainWeatherScreen.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
+            landmarkName = "uiUpdate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8E889D27-11B1-4E1F-979B-4072AA2B3DC8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "astWeatherApp/FlowController/FlowController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

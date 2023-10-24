@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class FutureTimeWeatherCell: UITableViewCell {
+class WeekWeatherCell: UITableViewCell {
     
     static let id = "WeekWeatherCellID"
     
@@ -54,7 +54,6 @@ class FutureTimeWeatherCell: UITableViewCell {
         self.timeLabel.text = String(formats)
         self.weatherImage.image = UIImage(named: item.weather?[0].icon ?? "")
         self.degreeLabel.text = String(item.main?.temp ?? 0.0) + "°"
-        
             self.timeLabel.snp.remakeConstraints { (make) in
                 make.leading.equalToSuperview().offset(15)
                 make.centerY.equalToSuperview()
@@ -72,7 +71,7 @@ class FutureTimeWeatherCell: UITableViewCell {
     }
 }
 
-extension FutureTimeWeatherCell {
+extension WeekWeatherCell {
     func setupUIs() {
         contentView.addSubview(timeLabel)
         contentView.addSubview(weatherImage)
