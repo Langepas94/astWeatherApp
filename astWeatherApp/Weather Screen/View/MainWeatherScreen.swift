@@ -16,7 +16,6 @@ class MainWeatherScreen: UIViewController {
     
     var viewModel: IMainScreenWeatherViewModel
     var cancellables: Set<AnyCancellable> = []
-    let locationManager = CLLocationManager()
     var data: WeatherModel = WeatherModel()
     var name: String?
     
@@ -59,21 +58,13 @@ class MainWeatherScreen: UIViewController {
     // MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        dataType()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         setupUI()
         uiUpdate()
-        
+        loadData()
     }
     
-    func dataType() {
-        switch viewModel.type {
-        case .city(let city):
-            viewModel.loadWeather(city)
-        case .geo:
-            requestGeoSwitcher()
-        }
+    func loadData() {
+        viewModel.loadWeather(from: nil)
     }
     
     init(viewModel: IMainScreenWeatherViewModel) {
@@ -127,7 +118,6 @@ extension MainWeatherScreen {
             make.trailing.equalToSuperview().offset(-25)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
-        
     }
     
     func uiUpdate() {
@@ -151,45 +141,5 @@ extension MainWeatherScreen: UITableViewDelegate, UITableViewDataSource {
         
         cell.configure(item: data.weekData[indexPath.row])
         return cell
-    }
-}
-
-extension MainWeatherScreen: CLLocationManagerDelegate {
-    
-    func requestGeoAccess() {
-        locationManager.requestWhenInUseAuthorization()
-    }
-    
-    func requestGeoSwitcher() {
-        
-        switch locationManager.authorizationStatus {
-            
-        case .notDetermined:
-            requestGeoAccess()
-            getGeo()
-        case .restricted:
-            requestGeoAccess()
-            getGeo()
-        case .denied:
-            requestGeoAccess()
-            getGeo()
-        case .authorizedAlways:
-            getGeo()
-        case .authorizedWhenInUse:
-            getGeo()
-        @unknown default:
-            requestGeoAccess()
-        }
-    }
-    
-    func getGeo() {
-        locationManager.startUpdatingLocation()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.first {
-            viewModel.loadWeather(location)
-            locationManager.stopUpdatingLocation()
-        }
     }
 }

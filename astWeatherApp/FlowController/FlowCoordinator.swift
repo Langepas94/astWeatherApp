@@ -9,10 +9,10 @@ import Foundation
 import UIKit
 import Combine
 
-protocol IFlowController: UIViewController {
-    func configureMainScreen(fetchType: WeatherTypeFetch)
-    func showTable()
-}
+//protocol IFlowController: UIViewController {
+//    func configureMainScreen(fetchType: WeatherTypeFetch)
+//    func showTable()
+//}
 
 class FlowCoordinator: UITabBarController {
     
@@ -20,17 +20,17 @@ class FlowCoordinator: UITabBarController {
     private var cancellables = Set<AnyCancellable>()
     var mainScreenViewModel: WeatherViewModel?
     
-    func configureCoordinator(fetchType: WeatherTypeFetch) {
+    func configureCoordinator() {
         
-        mainScreenViewModel = WeatherViewModel(type: fetchType)
+        mainScreenViewModel = WeatherViewModel()
         mainScreenViewModel?.coordinator = self
         
-        let mainScreenView = MainWeatherScreen(viewModel: mainScreenViewModel ?? WeatherViewModel(type: .geo))
+        let mainScreenView = MainWeatherScreen(viewModel: mainScreenViewModel!)
         
-        let mainScreenView2 = CityTableViewController(viewModel: secondViewModel)
+        let mainScreenView2 = UINavigationController(rootViewController: CityTableViewController(viewModel: secondViewModel))
         secondViewModel.coordinator = self
         tabBar.tintColor = .label
-        view.backgroundColor = .systemYellow
+        
         mainScreenView.tabBarItem.image = UIImage(systemName: "house")
         mainScreenView.title = "Home"
         
@@ -39,22 +39,19 @@ class FlowCoordinator: UITabBarController {
 
         self.viewControllers = [mainScreenView, mainScreenView2]
         
-     
     }
     
     func reconfigure() {
-        secondViewModel.updatePublisher
+        secondViewModel.reloadPublisher
             .sink { city in
-                print(city)
-                self.mainScreenViewModel?.type = .city(city: city)
-                self.mainScreenViewModel?.loadWeather(city)
+                self.mainScreenViewModel?.loadWeather(from: city)
             }
             .store(in: &cancellables)
     }
     
     init() {
         super.init(nibName: nil, bundle: nil)
-        configureCoordinator(fetchType: .geo)
+        configureCoordinator()
         reconfigure()
     }
     
