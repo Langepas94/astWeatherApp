@@ -16,7 +16,7 @@ import Combine
 
 class FlowCoordinator: UITabBarController {
     
-    var secondViewModel = CityViewModel()
+//    var secondViewModel = CityViewModel()
     private var cancellables = Set<AnyCancellable>()
     var mainScreenViewModel: WeatherViewModel?
     
@@ -24,11 +24,13 @@ class FlowCoordinator: UITabBarController {
         
         mainScreenViewModel = WeatherViewModel()
         mainScreenViewModel?.coordinator = self
-        
+//        let mainScreenView = WeatherListFlowController()
         let mainScreenView = MainWeatherScreen(viewModel: mainScreenViewModel!)
         
-        let mainScreenView2 = UINavigationController(rootViewController: CityTableViewController(viewModel: secondViewModel))
-        secondViewModel.coordinator = self
+//        let mainScreenView2 = UINavigationController(rootViewController: CityTableViewController(viewModel: secondViewModel))
+        let mainScreenView2 = WeatherListFlowController()
+        mainScreenView2.mainCoordinator = self
+//        secondViewModel.coordinator = self
         tabBar.tintColor = .label
         
         mainScreenView.tabBarItem.image = UIImage(systemName: "house")
@@ -42,11 +44,17 @@ class FlowCoordinator: UITabBarController {
     }
     
     func reconfigure() {
-        secondViewModel.reloadPublisher
-            .sink { city in
-                self.mainScreenViewModel?.loadWeather(from: city)
-            }
-            .store(in: &cancellables)
+//        secondViewModel.reloadPublisher
+//            .sink { city in
+//                self.mainScreenViewModel?.loadWeather(from: city)
+//            }
+//            .store(in: &cancellables)
+        
+//        mainScreenViewModel?.updatePublisher
+//            .sink(receiveValue: { cityModel in
+////                self.secondViewModel.addGeoCity(city: cityModel)
+//            })
+//            .store(in: &cancellables)
     }
     
     init() {

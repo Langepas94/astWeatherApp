@@ -11,13 +11,10 @@ import Combine
 
 class CityTableViewController: UIViewController {
     
-//    var data: [WeatherModel] = [WeatherModel()]
+    //    var data: [WeatherModel] = [WeatherModel()]
     var viewModel: CityViewModel
     
-    private lazy var searchController: UISearchController = {
-        let vc = ResultTableCitiesViewController(viewModel: viewModel)
-        return UISearchController(searchResultsController: vc)
-    }()
+    private var searchController: UISearchController
     
     private lazy var tableView: UITableView = {
         let table = UITableView()
@@ -25,6 +22,7 @@ class CityTableViewController: UIViewController {
         table.showsHorizontalScrollIndicator = false
         table.translatesAutoresizingMaskIntoConstraints = false
         table.register(UITableViewCell.self, forCellReuseIdentifier: "kek")
+        table.register(UITableViewCell.self, forCellReuseIdentifier: "bek")
         table.dataSource = self
         table.delegate = self
         return table
@@ -47,6 +45,7 @@ class CityTableViewController: UIViewController {
         }
         
         viewModel.readFavorite()
+        print(viewModel.tableData)
         viewModel.$tableData
             .sink { _ in
                 DispatchQueue.main.async {
@@ -56,6 +55,12 @@ class CityTableViewController: UIViewController {
             .store(in: &cancellables)
         
         viewModel.loadAllCities()
+        
+        viewModel.$geoCityData
+            .sink { _ in
+                self.tableView.reloadData()
+            }
+            .store(in: &cancellables)
         
         searchPublisher
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
@@ -75,8 +80,9 @@ class CityTableViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-    init(viewModel: CityViewModel) {
+    init(viewModel: CityViewModel, searchController: UISearchController) {
         self.viewModel = viewModel
+        self.searchController = searchController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -87,30 +93,35 @@ class CityTableViewController: UIViewController {
 
 extension CityTableViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.tableData.count
+        viewModel.tableData.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "kek", for: indexPath)
-        cell.textLabel?.text = viewModel.tableData[indexPath.row].name
-        return cell
+        if indexPath.row == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "bek", for: indexPath)
+            cell.textLabel?.text = viewModel.geoCityData?.cityName
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "kek", for: indexPath)
+            cell.textLabel?.text = viewModel.tableData[indexPath.row - 1].name
+            return cell
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let city = viewModel.tableData[indexPath.row]
+        let city = viewModel.tableData[indexPath.row - 1]
         viewModel.pressCity(city: city)
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-           if editingStyle == .delete {
-               
-               viewModel.deleteCity(index: indexPath.row)
-
-               // Animate the deletion of the row
-               tableView.deleteRows(at: [indexPath], with: .fade)
-           }
-       }
-    
+        if indexPath.row != 0 {
+            if editingStyle == .delete {
+                
+                viewModel.deleteCity(index: indexPath.row - 1)
+                tableView.deleteRows(at: [indexPath], with: .fade)
+            }
+        }
+    }
 }
 
 extension CityTableViewController: UISearchResultsUpdating {

@@ -16,12 +16,12 @@ class ResultTableCitiesViewController: UIViewController {
         table.translatesAutoresizingMaskIntoConstraints = false
         table.register(UITableViewCell.self, forCellReuseIdentifier: "TableView")
         table.separatorStyle = .none
-//        table.backgroundColor = .black.withAlphaComponent(0.1)
         return table
     }()
     
+    let viewController: AddCityViewController
+    
     public var filteredNames: [City] = []
-    var viewModel: CityViewModel
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,8 +29,8 @@ class ResultTableCitiesViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
     }
-    init(viewModel: CityViewModel) {
-        self.viewModel = viewModel
+    init(viewController: AddCityViewController) {
+        self.viewController = viewController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -55,15 +55,12 @@ extension ResultTableCitiesViewController: UITableViewDataSource, UITableViewDel
         config.text = "\(String(describing: filteredNames[indexPath.row].name ?? "")) || \(String(describing: filteredNames[indexPath.row].country ?? ""))"
         cell.selectionStyle = .none
         cell.contentConfiguration = config
-//        cell.textLabel?.text = "\(filteredNames[indexPath.row].name)"
-//        cell.backgroundColor = .black.withAlphaComponent(0.3)
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let vc = AddCityViewController(viewModel: viewModel)
-////        vc.callCity = self.callCity
+        let vc = viewController
         vc.city = filteredNames[indexPath.row]
         vc.titleCity = filteredNames[indexPath.row].name
         vc.modalPresentationStyle = .popover
@@ -73,8 +70,6 @@ extension ResultTableCitiesViewController: UITableViewDataSource, UITableViewDel
         vc.popoverPresentationController?.sourceView = self.tableView
             present(vc, animated: true)
     }
-    
-
 }
 
 extension ResultTableCitiesViewController: UIPopoverPresentationControllerDelegate {

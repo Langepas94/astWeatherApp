@@ -16,7 +16,6 @@ class MainWeatherScreen: UIViewController {
     
     var viewModel: IMainScreenWeatherViewModel
     var cancellables: Set<AnyCancellable> = []
-    var data: WeatherModel = WeatherModel()
     var name: String?
     
     let cityNameLabel: UILabel = {
@@ -81,7 +80,7 @@ class MainWeatherScreen: UIViewController {
 
 extension MainWeatherScreen {
     
-    func configureScreenData() {
+    func configureScreenData(data: WeatherModel) {
         self.cityNameLabel.text = data.cityName
         self.degreesLabel.text = "\(String(describing: data.nowDegrees))" + "°C"
         self.descriptionWeatherLabel.text = data.description
@@ -123,8 +122,8 @@ extension MainWeatherScreen {
     func uiUpdate() {
         viewModel.updatePublisher
             .sink { dataModel in
-                self.data = dataModel
-                self.configureScreenData()
+//                self.data = dataModel
+                self.configureScreenData(data: dataModel)
             }
             .store(in: &cancellables)
     }
@@ -133,13 +132,15 @@ extension MainWeatherScreen {
 // MARK: - Setup Table
 extension MainWeatherScreen: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        data.weekData.count
+        viewModel.data?.weekData.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = weekTable.dequeueReusableCell(withIdentifier: WeekWeatherCell.id, for: indexPath) as? WeekWeatherCell else {return UITableViewCell() }
         
-        cell.configure(item: data.weekData[indexPath.row])
+        if let data = viewModel.data {
+            cell.configure(item: data.weekData[indexPath.row])
+        }
         return cell
     }
 }

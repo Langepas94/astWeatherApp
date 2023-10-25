@@ -63,7 +63,7 @@ class AddCityViewController: UIViewController {
         return label
     }()
     
-    let viewModel: CityViewModel
+    let viewModel: AddCityViewModel
     
     var cancellables: Set<AnyCancellable> = []
     var callCity: ((String?) -> ())?
@@ -85,7 +85,7 @@ class AddCityViewController: UIViewController {
         self.descriptionWeatherLabel.text = item.description
     }
     
-    init(viewModel: CityViewModel) {
+    init(viewModel: AddCityViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -95,19 +95,18 @@ class AddCityViewController: UIViewController {
     }
     
     @objc func buttonAction() {
-        viewModel.addToFavorite(city: city!)
+        viewModel.addCity(city: city!)
         self.dismiss(animated: true)
     }
     
     func getData() {
         guard let citu = city else { return }
-        viewModel.fetchCityData(city: citu)
+        viewModel.fetchWeather(city: citu)
         viewModel.updatePublisher
             .sink { model in
                 self.configurePopView(item: model)
             }
             .store(in: &cancellables)
-        
     }
 }
 

@@ -7,13 +7,12 @@
 
 import Foundation
 import Combine
-import CoreLocation
-
 
 protocol IMainScreenWeatherViewModel {
     var network: INetworkManager { get set }
     var updatePublisher: PassthroughSubject<WeatherModel, Never> { get set }
     var coordinator: FlowCoordinator? { get set }
+    var data: WeatherModel? { get set }
     func loadWeather(from city: City?)
 }
 
@@ -23,8 +22,7 @@ class WeatherViewModel: IMainScreenWeatherViewModel {
     weak var coordinator: FlowCoordinator?
     var network: INetworkManager = NetworkManager()
     private var cancellables = Set<AnyCancellable>()
-    private var data: WeatherModel?
-    
+    var data: WeatherModel?
     var updatePublisher = PassthroughSubject<WeatherModel, Never>()
     
     func loadWeather(from city: City?) {
@@ -34,19 +32,18 @@ class WeatherViewModel: IMainScreenWeatherViewModel {
                 guard let location = location else { return }
                 self.network.loadWeather(requestType: .forecast, requestWithData: .geoLocation(location.coordinate.latitude, location.coordinate.longitude))
                     .sink { completion in
-                                    switch completion {
-                                    case .finished:
-                                        guard let data = self.data else { return }
-                                        self.updatePublisher.send(data)
-                                    case .failure(let error):
-                                        print(error.localizedDescription)
-                                    }
-                                } receiveValue: { weathers in
-                                    self.data = WeatherModel(from: weathers)
-                                }
-                                .store(in: &self.cancellables)
+                        switch completion {
+                        case .finished:
+                            guard let data = self.data else { return }
+                            self.updatePublisher.send(data)
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                        }
+                    } receiveValue: { weathers in
+                        self.data = WeatherModel(from: weathers)
+                    }
+                    .store(in: &self.cancellables)
             }
             .store(in: &self.cancellables)
     }
-    
 }

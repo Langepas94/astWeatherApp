@@ -47,27 +47,12 @@ class WeekWeatherCell: UITableViewCell {
     }
     
     func configure(item: List) {
-        
         let date = item.dt ?? 0
         let convertDate = Date(timeIntervalSince1970: TimeInterval(date))
-        let formats = convertDate.formatted(.dateTime.hour().minute())
+        let formats = convertDate.formatted(.dateTime.day().month(.twoDigits).hour().minute())
         self.timeLabel.text = String(formats)
         self.weatherImage.image = UIImage(named: item.weather?[0].icon ?? "")
         self.degreeLabel.text = String(item.main?.temp ?? 0.0) + "°"
-            self.timeLabel.snp.remakeConstraints { (make) in
-                make.leading.equalToSuperview().offset(15)
-                make.centerY.equalToSuperview()
-            }
-            self.degreeLabel.snp.remakeConstraints { (make) in
-                make.trailing.equalToSuperview().offset(-15)
-                make.centerY.equalToSuperview()
-            }
-            
-            self.weatherImage.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-            }
-            self.contentView.layoutIfNeeded()
-        
     }
 }
 
@@ -78,21 +63,19 @@ extension WeekWeatherCell {
         contentView.addSubview(degreeLabel)
        
         timeLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(55)
+            make.leading.equalToSuperview().offset(5)
             make.height.equalTo(50)
             make.centerY.equalToSuperview()
         }
         
-        UIView.animate(withDuration: 1) {
-            self.timeLabel.alpha = 1
-        }
-        
         weatherImage.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.height.equalToSuperview()
         }
         
         degreeLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-55)
+            make.trailing.equalToSuperview().offset(-5)
             make.height.equalTo(50)
             make.centerY.equalToSuperview()
         }

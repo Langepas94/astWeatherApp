@@ -94,9 +94,10 @@ class CitiesDatabase: IDataBase {
                 citiess.remove(at: index)
                 if let newCitiess = try? JSONEncoder().encode(citiess) {
                     userDefaults.set(newCitiess, forKey: "city")
+                    userDefaults.synchronize()
                 }
             }
         }
-        userDefaults.synchronize()
+      
     }
 }

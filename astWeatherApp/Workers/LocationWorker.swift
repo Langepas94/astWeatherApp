@@ -18,7 +18,11 @@ class LocationWorker: NSObject, ObservableObject {
     }()
     let locationPublisher = PassthroughSubject<CLLocation, Never>()
     
-    @Published var location: CLLocation?
+    @Published var location: CLLocation? {
+        didSet {
+            
+        }
+    }
     
     private func requestGeoAccess() {
         locationManager.requestWhenInUseAuthorization()
@@ -54,7 +58,7 @@ class LocationWorker: NSObject, ObservableObject {
     func fetchGeo(from city: City?) {
         if city != nil {
             guard let coord = city?.coord, let lat = coord.lat, let lon = coord.lon else { return }
-            var coords = CLLocation(latitude: lat, longitude: lon)
+            let coords = CLLocation(latitude: lat, longitude: lon)
             self.location = coords
         } else {
             requestGeoSwitcher()
@@ -70,9 +74,7 @@ class LocationWorker: NSObject, ObservableObject {
 extension LocationWorker: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {
-            
             self.location = location
-//            locationManager.stopUpdatingLocation()
         }
     }
     

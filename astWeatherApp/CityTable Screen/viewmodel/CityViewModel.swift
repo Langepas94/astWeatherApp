@@ -13,21 +13,25 @@ class CityViewModel {
     var updatePublisher = PassthroughSubject<WeatherModel, Never>()
     var reloadPublisher = PassthroughSubject<City, Never>()
     weak var coordinator: FlowCoordinator?
+    weak var testcoordinator: WeatherListFlowController?
     var data: WeatherModel?
     @Published var tableData: [City] = []
-    private var db = CitiesDatabase()
+    private var db: CitiesDatabase
     private var networkManager = NetworkManager()
     var filteredNamesPublisher = PassthroughSubject<[City], Never>()
+    @Published var geoCityData: WeatherModel?
     
     func pressCity(city: City) {
-       
         reloadPublisher.send(city)
     }
     
+    func addGeoCity(city: WeatherModel) {
+        self.geoCityData = city
+    }
+    
     func addToFavorite(city: City) {
-        db.addToFavorite(city: city)
+//        db.addToFavorite(city: city)
         self.tableData = db.readFavorite() ?? [City]()
-        
     }
     
     func readFavorite() {
@@ -81,6 +85,7 @@ class CityViewModel {
         db.deleteCity(city: city)
     }
     
-    init() {
+    init(db: CitiesDatabase) {
+        self.db = db
     }
 }
