@@ -11,39 +11,67 @@ import Combine
 protocol IMainScreenWeatherViewModel {
     var network: INetworkManager { get set }
     var updatePublisher: PassthroughSubject<WeatherModel, Never> { get set }
-    var coordinator: FlowCoordinator? { get set }
+    var geoPublisher: PassthroughSubject<WeatherModel, Never> { get set }
+    var coordinator: MainCoordinator? { get set }
     var data: WeatherModel? { get set }
     func loadWeather(from city: City?)
 }
 
 class WeatherViewModel: IMainScreenWeatherViewModel {
-    
+    var geoPublisher = PassthroughSubject<WeatherModel, Never>()
     private var locationWorker = LocationWorker()
-    weak var coordinator: FlowCoordinator?
+    weak var coordinator: MainCoordinator?
     var network: INetworkManager = NetworkManager()
     private var cancellables = Set<AnyCancellable>()
     var data: WeatherModel?
     var updatePublisher = PassthroughSubject<WeatherModel, Never>()
+    var locations = (lat: 0.0, lon: 0.0)
+    
+    func loadLocation() {
+        locationWorker.requestGeoSwitcher()
+        locationWorker.locationPublisher
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                   break
+                }
+            }, receiveValue: { [weak self] location in
+                
+                self?.locations = location
+                self?.loadWeather(from: nil)
+                self?.network(location: location, publisher: self!.geoPublisher)
+            })
+      .store(in: &cancellables)
+    }
     
     func loadWeather(from city: City?) {
-        locationWorker.fetchGeo(from: city)
-        locationWorker.$location
-            .sink { location in
-                guard let location = location else { return }
-                self.network.loadWeather(requestType: .forecast, requestWithData: .geoLocation(location.coordinate.latitude, location.coordinate.longitude))
-                    .sink { completion in
-                        switch completion {
-                        case .finished:
-                            guard let data = self.data else { return }
-                            self.updatePublisher.send(data)
-                        case .failure(let error):
-                            print(error.localizedDescription)
-                        }
-                    } receiveValue: { weathers in
-                        self.data = WeatherModel(from: weathers)
-                    }
-                    .store(in: &self.cancellables)
+        if city != nil {
+            network(location: (city?.coord?.lat ?? 0.0, city?.coord?.lon ?? 0.0), publisher: updatePublisher)
+        } else {
+            locations = locationWorker.location
+            network(location: locations, publisher: updatePublisher)
+        }
+    }
+    
+    private func network(location: (lat: Double, lon: Double), publisher: PassthroughSubject<WeatherModel, Never>) {
+        network.loadWeather(requestType: .forecast, requestWithData: .geoLocation(location.lat, location.lon))
+            .sink {completion in
+                switch completion {
+                case .finished:
+                    guard let data = self.data else { return }
+                    publisher.send(data)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            } receiveValue: { weathers in
+                self.data = WeatherModel(from: weathers)
             }
             .store(in: &self.cancellables)
     }
+    
+    init() {
+        loadLocation()
+    }
 }
+
+

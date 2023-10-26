@@ -8,7 +8,6 @@
 import UIKit
 import Combine
 import SnapKit
-import CoreLocation
 
 class MainWeatherScreen: UIViewController {
     
@@ -122,7 +121,6 @@ extension MainWeatherScreen {
     func uiUpdate() {
         viewModel.updatePublisher
             .sink { dataModel in
-//                self.data = dataModel
                 self.configureScreenData(data: dataModel)
             }
             .store(in: &cancellables)

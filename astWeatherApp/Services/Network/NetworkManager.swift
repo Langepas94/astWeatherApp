@@ -36,7 +36,6 @@ final class NetworkManager: INetworkManager {
     func loadWeather(requestType: RequestType,
                      requestWithData: RequestWeatherWithData)
     -> AnyPublisher<NetworkWeatherDataModel, Error> {
-        
         let url = createURLComponents(requestWithData, requestType: requestType)
         guard let url = url?.url else { return Fail(error: WeatherError.invalidResponse).eraseToAnyPublisher() }
         return URLSession.shared.dataTaskPublisher(for: url)
@@ -57,13 +56,12 @@ final class NetworkManager: INetworkManager {
         
         switch request {
         case .city(let city):
-            
             urlComponents?.queryItems = [
                 URLQueryItem(name: "q", value: city),
                 URLQueryItem(name: "appid", value: apiKey),
                 URLQueryItem(name: "units", value: "metric")]
-            
             return urlComponents
+            
         case .geoLocation(let lat, let lon):
             urlComponents?.queryItems = [
                 URLQueryItem(name: "lat", value: "\(lat)"),

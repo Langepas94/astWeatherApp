@@ -7,33 +7,39 @@
 
 import Foundation
 import UIKit
+import Combine
 
 protocol IWeatherListFlowController {
     func loadTableScreen()
-    func goSearchScreen()
     func goAddCity(city: City)
-    var mainCoordinator: FlowCoordinator? { get set }
+    var mainCoordinator: MainCoordinator? { get set }
 }
 
 class WeatherListFlowController: UINavigationController, IWeatherListFlowController {
-    var mainCoordinator: FlowCoordinator?
+    var mainCoordinator: MainCoordinator?
     let db = CitiesDatabase()
     var cityViewModel: CityViewModel?
+    private var cancellables = Set<AnyCancellable>()
     
     func loadTableScreen() {
     
-        let addViewModel: AddCityViewModel = AddCityViewModel()
-        let addViewController = AddCityViewController(viewModel: addViewModel)
+        var addViewModel: IAddCityViewModel = AddCityViewModel()
         addViewModel.coordinator = self
+        let addViewController = AddCityViewController(viewModel: addViewModel)
+      
         let resultScreen = ResultTableCitiesViewController(viewController: addViewController)
         let searchScreenController = UISearchController(searchResultsController: resultScreen)
+        
         cityViewModel?.testcoordinator = self
         let cityScreen = CityTableViewController(viewModel: cityViewModel!, searchController: searchScreenController)
+        
         self.setViewControllers([cityScreen], animated: false)
-    }
-    
-    func goSearchScreen() {
-        //
+        
+        cityViewModel?.reloadPublisher
+            .sink(receiveValue: { [weak self] city in
+                self?.mainCoordinator?.reconfigure(city: city)
+            })
+            .store(in: &cancellables)
     }
     
     func goAddCity(city: City) {
@@ -45,6 +51,15 @@ class WeatherListFlowController: UINavigationController, IWeatherListFlowControl
         cityViewModel = CityViewModel(db: db)
         super.init(nibName: nil, bundle: nil)
         loadTableScreen()
+    }
+    
+    func pressGeo() {
+        mainCoordinator?.reconfigure(city: nil)
+    }
+    
+    func reconfigure(city: WeatherModel) {
+  
+        cityViewModel?.setGeoCity(city: city)
     }
     
     required init?(coder: NSCoder) {

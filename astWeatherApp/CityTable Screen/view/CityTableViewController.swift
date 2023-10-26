@@ -45,7 +45,6 @@ class CityTableViewController: UIViewController {
         }
         
         viewModel.readFavorite()
-        print(viewModel.tableData)
         viewModel.$tableData
             .sink { _ in
                 DispatchQueue.main.async {
@@ -109,14 +108,17 @@ extension CityTableViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let city = viewModel.tableData[indexPath.row - 1]
-        viewModel.pressCity(city: city)
+        if indexPath.row == 0 {
+            viewModel.pressGeo()
+        } else {
+            let city = viewModel.tableData[indexPath.row - 1]
+            viewModel.pressCity(city: city)
+        }
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if indexPath.row != 0 {
             if editingStyle == .delete {
-                
                 viewModel.deleteCity(index: indexPath.row - 1)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             }

@@ -63,7 +63,7 @@ class AddCityViewController: UIViewController {
         return label
     }()
     
-    let viewModel: AddCityViewModel
+    let viewModel: IAddCityViewModel
     
     var cancellables: Set<AnyCancellable> = []
     var callCity: ((String?) -> ())?
@@ -81,11 +81,11 @@ class AddCityViewController: UIViewController {
     
     func configurePopView(item: WeatherModel) {
         self.degreesLabel.text = String(item.nowDegrees)
-        self.weatherImage.image = UIImage(named: item.icon ?? "")
+        self.weatherImage.image = UIImage(named: item.icon)
         self.descriptionWeatherLabel.text = item.description
     }
     
-    init(viewModel: AddCityViewModel) {
+    init(viewModel: IAddCityViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

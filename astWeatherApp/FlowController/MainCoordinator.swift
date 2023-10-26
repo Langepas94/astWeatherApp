@@ -14,24 +14,20 @@ import Combine
 //    func showTable()
 //}
 
-class FlowCoordinator: UITabBarController {
+class MainCoordinator: UITabBarController {
     
-//    var secondViewModel = CityViewModel()
     private var cancellables = Set<AnyCancellable>()
-    var mainScreenViewModel: WeatherViewModel?
+    var mainScreenViewModel: WeatherViewModel = WeatherViewModel()
     
     func configureCoordinator() {
         
-        mainScreenViewModel = WeatherViewModel()
-        mainScreenViewModel?.coordinator = self
-//        let mainScreenView = WeatherListFlowController()
-        let mainScreenView = MainWeatherScreen(viewModel: mainScreenViewModel!)
         
-//        let mainScreenView2 = UINavigationController(rootViewController: CityTableViewController(viewModel: secondViewModel))
+        mainScreenViewModel.coordinator = self
+
+        let mainScreenView = MainWeatherScreen(viewModel: mainScreenViewModel)
+        
         let mainScreenView2 = WeatherListFlowController()
         mainScreenView2.mainCoordinator = self
-//        secondViewModel.coordinator = self
-        tabBar.tintColor = .label
         
         mainScreenView.tabBarItem.image = UIImage(systemName: "house")
         mainScreenView.title = "Home"
@@ -41,26 +37,25 @@ class FlowCoordinator: UITabBarController {
 
         self.viewControllers = [mainScreenView, mainScreenView2]
         
+        mainScreenViewModel.geoPublisher
+            .sink(receiveValue: { model in
+                mainScreenView2.reconfigure(city: model)
+            })
+            .store(in: &cancellables)
+        
     }
     
-    func reconfigure() {
-//        secondViewModel.reloadPublisher
-//            .sink { city in
-//                self.mainScreenViewModel?.loadWeather(from: city)
-//            }
-//            .store(in: &cancellables)
-        
-//        mainScreenViewModel?.updatePublisher
-//            .sink(receiveValue: { cityModel in
-////                self.secondViewModel.addGeoCity(city: cityModel)
-//            })
-//            .store(in: &cancellables)
+    func reconfigure(city: City?) {
+        if city == nil {
+            mainScreenViewModel.loadWeather(from: nil)
+        } else {
+            mainScreenViewModel.loadWeather(from: city)
+        }
     }
     
     init() {
         super.init(nibName: nil, bundle: nil)
         configureCoordinator()
-        reconfigure()
     }
     
     required init?(coder: NSCoder) {
