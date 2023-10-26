@@ -24,22 +24,22 @@ class MainCoordinator: UITabBarController {
         
         mainScreenViewModel.coordinator = self
 
-        let mainScreenView = MainWeatherScreen(viewModel: mainScreenViewModel)
+        let mainWeatherViewController = MainWeatherScreen(viewModel: mainScreenViewModel)
         
-        let mainScreenView2 = WeatherListFlowController()
-        mainScreenView2.mainCoordinator = self
+        let tableWithCitiesViewController = TableVithCitiesCoordinator()
+        tableWithCitiesViewController.mainCoordinator = self
         
-        mainScreenView.tabBarItem.image = UIImage(systemName: "house")
-        mainScreenView.title = "Home"
+        mainWeatherViewController.tabBarItem.image = UIImage(systemName: "house")
+        mainWeatherViewController.title = "Home"
         
-        mainScreenView2.tabBarItem.image = UIImage(systemName: "play.circle")
-        mainScreenView2.title = "Table"
+        tableWithCitiesViewController.tabBarItem.image = UIImage(systemName: "play.circle")
+        tableWithCitiesViewController.title = "Table"
 
-        self.viewControllers = [mainScreenView, mainScreenView2]
+        self.viewControllers = [mainWeatherViewController, tableWithCitiesViewController]
         
         mainScreenViewModel.geoPublisher
             .sink(receiveValue: { model in
-                mainScreenView2.reconfigure(city: model)
+                tableWithCitiesViewController.reconfigure(city: model)
             })
             .store(in: &cancellables)
         

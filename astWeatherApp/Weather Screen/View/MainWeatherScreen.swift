@@ -129,15 +129,19 @@ extension MainWeatherScreen {
 
 // MARK: - Setup Table
 extension MainWeatherScreen: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, 
+                   numberOfRowsInSection section: Int) -> Int {
         viewModel.data?.weekData.count ?? 0
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = weekTable.dequeueReusableCell(withIdentifier: WeekWeatherCell.id, for: indexPath) as? WeekWeatherCell else {return UITableViewCell() }
+    func tableView(_ tableView: UITableView, 
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = weekTable.dequeueReusableCell(withIdentifier: WeekWeatherCell.id, 
+                                                       for: indexPath) as? WeekWeatherCell else {return UITableViewCell() }
         
         if let data = viewModel.data {
-            cell.configure(item: data.weekData[indexPath.row])
+            cell.configure(
+                item: data.weekData[indexPath.row])
         }
         return cell
     }

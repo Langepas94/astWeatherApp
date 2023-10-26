@@ -56,19 +56,6 @@ class LocationWorker: NSObject, ObservableObject {
         locationManager.startUpdatingLocation()
       
     }
-    
-    
-//    func fetchGeo(from city: City?) {
-//      
-//        if city != nil {
-//            guard let coord = city?.coord, let lat = coord.lat, let lon = coord.lon else { return }
-//            let coords = CLLocation(latitude: lat, longitude: lon)
-//            self.location = coords
-//        } else {
-//            requestGeoSwitcher()
-//        }
-//    }
-    
 }
 
 extension LocationWorker: CLLocationManagerDelegate {

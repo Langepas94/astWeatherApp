@@ -15,7 +15,7 @@ protocol IWeatherListFlowController {
     var mainCoordinator: MainCoordinator? { get set }
 }
 
-class WeatherListFlowController: UINavigationController, IWeatherListFlowController {
+class TableVithCitiesCoordinator: UINavigationController, IWeatherListFlowController {
     var mainCoordinator: MainCoordinator?
     let db = CitiesDatabase()
     var cityViewModel: CityViewModel?
@@ -28,13 +28,16 @@ class WeatherListFlowController: UINavigationController, IWeatherListFlowControl
         let addViewController = AddCityViewController(viewModel: addViewModel)
       
         let resultScreen = ResultTableCitiesViewController(viewController: addViewController)
-        let searchScreenController = UISearchController(searchResultsController: resultScreen)
+        let searchScreenController: UISearchController = UISearchController(searchResultsController: resultScreen)
         
         cityViewModel?.testcoordinator = self
         let cityScreen = CityTableViewController(viewModel: cityViewModel!, searchController: searchScreenController)
         
         self.setViewControllers([cityScreen], animated: false)
         
+    }
+    
+    func setupBind() {
         cityViewModel?.reloadPublisher
             .sink(receiveValue: { [weak self] city in
                 self?.mainCoordinator?.reconfigure(city: city)
@@ -51,6 +54,7 @@ class WeatherListFlowController: UINavigationController, IWeatherListFlowControl
         cityViewModel = CityViewModel(db: db)
         super.init(nibName: nil, bundle: nil)
         loadTableScreen()
+        setupBind()
     }
     
     func pressGeo() {
@@ -58,7 +62,6 @@ class WeatherListFlowController: UINavigationController, IWeatherListFlowControl
     }
     
     func reconfigure(city: WeatherModel) {
-  
         cityViewModel?.setGeoCity(city: city)
     }
     

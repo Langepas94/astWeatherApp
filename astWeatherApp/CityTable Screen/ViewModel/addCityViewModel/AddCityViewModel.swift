@@ -13,7 +13,7 @@ protocol IAddCityViewModel {
     var updatePublisher: PassthroughSubject<WeatherModel, Never> { get set }
     var data: WeatherModel? { get set }
     func addCity(city: City)
-    var coordinator: WeatherListFlowController? { get set }
+    var coordinator: TableVithCitiesCoordinator? { get set }
 }
 
 class AddCityViewModel: IAddCityViewModel {
@@ -23,7 +23,7 @@ class AddCityViewModel: IAddCityViewModel {
     var updatePublisher: PassthroughSubject<WeatherModel, Never> = PassthroughSubject<WeatherModel, Never>()
     var data: WeatherModel?
     
-    weak var coordinator: WeatherListFlowController?
+    weak var coordinator: TableVithCitiesCoordinator?
     
     func fetchWeather(city: City) {
         guard let coord = city.coord, let lat = coord.lat, let lon = coord.lon else { return }

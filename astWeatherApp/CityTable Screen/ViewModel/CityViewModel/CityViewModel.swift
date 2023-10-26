@@ -12,16 +12,12 @@ class CityViewModel {
     private var cancellables = Set<AnyCancellable>()
     var updatePublisher = PassthroughSubject<WeatherModel, Never>()
     var reloadPublisher = PassthroughSubject<City, Never>()
-    var geoPublisher = PassthroughSubject<Void, Never>()
-    weak var coordinator: MainCoordinator?
-    weak var testcoordinator: WeatherListFlowController?
-    var data: WeatherModel?
+    weak var testcoordinator: TableVithCitiesCoordinator?
     @Published var tableData: [City] = []
     private var db: CitiesDatabase
     private var networkManager = NetworkManager()
     var filteredNamesPublisher = PassthroughSubject<[City], Never>()
     @Published var geoCityData: WeatherModel?
-    private var locationWorker = LocationWorker()
     
     func pressCity(city: City) {
         print("press city")
@@ -34,8 +30,6 @@ class CityViewModel {
     }
     
     func setGeoCity(city: WeatherModel) {
-//        locationManager.getGeo()
-//        print(locationManager.$location)
             self.geoCityData = city
     }
     
@@ -45,23 +39,6 @@ class CityViewModel {
     
     func readFavorite() {
         self.tableData = db.readFavorite() ?? [City]()
-    }
-    
-    func fetchCityData(city: City) {
-        guard let coord = city.coord, let lat = coord.lat , let lon = coord.lon else { return }
-        networkManager.loadWeather(requestType: .forecast, requestWithData: .geoLocation(lat, lon))
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    guard let data = self.data else { return }
-                    self.updatePublisher.send(data)
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
-            } receiveValue: { weathers in
-                self.data = WeatherModel(from: weathers)
-            }
-            .store(in: &self.cancellables)
     }
     
     func loadAllCities() {
