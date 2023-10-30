@@ -61,8 +61,9 @@ extension ResultTableCitiesViewController: UITableViewDataSource, UITableViewDel
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let vc = viewController
-        vc.city = filteredNames[indexPath.row]
-        vc.titleCity = filteredNames[indexPath.row].name
+//        vc.city = filteredNames[indexPath.row]
+//        vc.titleCity = filteredNames[indexPath.row].name
+        vc.configureData(city: filteredNames[indexPath.row])
         vc.modalPresentationStyle = .popover
         vc.popoverPresentationController?.delegate = self
         vc.preferredContentSize = CGSize(width: 330, height: 120)

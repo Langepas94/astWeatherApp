@@ -21,7 +21,7 @@ class MainWeatherScreen: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
-        label.font = UIFont(name: "AppleSDGothicNeo-Medium", size: 32)
+        label.font = AppResources.MainScreen.Fonts.ViewController.cityNameLabel
         label.textAlignment = .center
         return label
     }()
@@ -30,7 +30,7 @@ class MainWeatherScreen: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
-        label.font = UIFont(name: "AppleSDGothicNeo-Bold", size: 63)
+        label.font = AppResources.MainScreen.Fonts.ViewController.degreesLabel
         label.textAlignment = .center
         return label
     }()
@@ -39,7 +39,7 @@ class MainWeatherScreen: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
-        label.font = UIFont(name: "AppleSDGothicNeo-Medium", size: 13)
+        label.font = AppResources.MainScreen.Fonts.ViewController.desxcriptionLabel
         return label
     }()
     
@@ -97,23 +97,23 @@ extension MainWeatherScreen {
         
         cityNameLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(16)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(AppResources.MainScreen.Constraints.ViewController.CityNameLabel.top)
         }
         
         degreesLabel.snp.makeConstraints { make in
-            make.top.equalTo(cityNameLabel.snp.bottom).offset(22)
+            make.top.equalTo(cityNameLabel.snp.bottom).offset(AppResources.MainScreen.Constraints.ViewController.DegreesLabel.top)
             make.centerX.equalToSuperview()
         }
         
         descriptionWeatherLabel.snp.makeConstraints { make in
-            make.top.equalTo(degreesLabel.snp.bottom).offset(22)
+            make.top.equalTo(degreesLabel.snp.bottom).offset(AppResources.MainScreen.Constraints.ViewController.DescriptionLabel.top)
             make.centerX.equalToSuperview()
         }
         
         weekTable.snp.makeConstraints { make in
-            make.top.equalTo(descriptionWeatherLabel.snp.bottom).offset(22)
-            make.leading.equalToSuperview().offset(25)
-            make.trailing.equalToSuperview().offset(-25)
+            make.top.equalTo(descriptionWeatherLabel.snp.bottom).offset(AppResources.MainScreen.Constraints.ViewController.Table.top)
+            make.leading.equalToSuperview().offset(AppResources.MainScreen.Constraints.ViewController.Table.leading)
+            make.trailing.equalToSuperview().offset(AppResources.MainScreen.Constraints.ViewController.Table.trailing)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }

@@ -66,23 +66,28 @@ class AddCityViewController: UIViewController {
     let viewModel: IAddCityViewModel
     
     var cancellables: Set<AnyCancellable> = []
-    var callCity: ((String?) -> ())?
-    var titleCity: String?
-    var city: City?
+//    var callCity: ((String?) -> ())?
+//    var titleCity: String?
+    private var city: City?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         actionButton.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
-        mainCityLabel.text = titleCity ?? ""
+//        mainCityLabel.text = titleCity ?? ""
         getData()
         
     }
     
     func configurePopView(item: WeatherModel) {
+        self.mainCityLabel.text = item.cityName
         self.degreesLabel.text = String(item.nowDegrees)
         self.weatherImage.image = UIImage(named: item.icon)
         self.descriptionWeatherLabel.text = item.description
+    }
+    
+    func configureData(city: City) {
+        self.city = city
     }
     
     init(viewModel: IAddCityViewModel) {
@@ -95,13 +100,14 @@ class AddCityViewController: UIViewController {
     }
     
     @objc func buttonAction() {
-        viewModel.addCity(city: city!)
+        guard let city = city else { return }
+        viewModel.addCity(city: city)
         self.dismiss(animated: true)
     }
     
     func getData() {
-        guard let citu = city else { return }
-        viewModel.fetchWeather(city: citu)
+        guard let city = city else { return }
+        viewModel.fetchWeather(city: city)
         viewModel.updatePublisher
             .sink { model in
                 self.configurePopView(item: model)

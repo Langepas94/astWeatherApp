@@ -14,10 +14,10 @@ class WeekWeatherCell: UITableViewCell {
     
     let timeLabel: UILabel = {
         let label = UILabel()
-        label.text = "Loading"
+        label.text = AppResources.MainScreen.Labels.WeatherCell.defaulCellLabel
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .black
-        label.font = UIFont(name: "AppleSDGothicNeo-Medium", size: 20)
+        label.textColor = AppResources.MainScreen.Colors.WeatherCell.cellTextColor
+        label.font = AppResources.UniversalElements.Fonts.cellFont
         return label
     }()
     
@@ -32,8 +32,8 @@ class WeekWeatherCell: UITableViewCell {
     let degreeLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .black
-        label.font = UIFont(name: "AppleSDGothicNeo-Medium", size: 20)
+        label.textColor = AppResources.MainScreen.Colors.WeatherCell.cellTextColor
+        label.font = AppResources.UniversalElements.Fonts.cellFont
         return label
     }()
     
@@ -63,8 +63,8 @@ extension WeekWeatherCell {
         contentView.addSubview(degreeLabel)
        
         timeLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(5)
-            make.height.equalTo(50)
+            make.leading.equalToSuperview().offset(AppResources.MainScreen.Constraints.WeatherCell.leadingOffset)
+            make.height.equalTo(AppResources.MainScreen.Constraints.WeatherCell.height)
             make.centerY.equalToSuperview()
         }
         
@@ -75,8 +75,8 @@ extension WeekWeatherCell {
         }
         
         degreeLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-5)
-            make.height.equalTo(50)
+            make.trailing.equalToSuperview().offset(AppResources.MainScreen.Constraints.WeatherCell.trailingOffset)
+            make.height.equalTo(AppResources.MainScreen.Constraints.WeatherCell.height)
             make.centerY.equalToSuperview()
         }
     }
