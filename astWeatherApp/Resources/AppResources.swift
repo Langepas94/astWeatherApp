@@ -34,7 +34,7 @@ struct AppResources {
         struct Constraints {
             struct WeatherCell {
                 static let leadingOffset = 5
-                static let height = 5
+                static let height = 50
                 static let trailingOffset = -5
             }
             

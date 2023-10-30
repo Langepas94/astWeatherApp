@@ -15,10 +15,9 @@ protocol IWeatherListFlowController {
     var mainCoordinator: MainCoordinator? { get set }
 }
 
-class TableVithCitiesCoordinator: UINavigationController, IWeatherListFlowController {
+class TableWithCitiesCoordinator: UINavigationController, IWeatherListFlowController {
     var mainCoordinator: MainCoordinator?
-    let db = CitiesDatabase()
-    var cityViewModel: CityViewModel?
+    var cityViewModel: CityViewModel = CityViewModel()
     private var cancellables = Set<AnyCancellable>()
     
     func loadTableScreen() {
@@ -30,15 +29,14 @@ class TableVithCitiesCoordinator: UINavigationController, IWeatherListFlowContro
         let resultScreen = ResultTableCitiesViewController(viewController: addViewController)
         let searchScreenController: UISearchController = UISearchController(searchResultsController: resultScreen)
         
-        cityViewModel?.testcoordinator = self
-        let cityScreen = CityTableViewController(viewModel: cityViewModel!, searchController: searchScreenController)
-        
+        cityViewModel.testcoordinator = self
+        let cityScreen = CityTableViewController(viewModel: cityViewModel, searchController: searchScreenController)
+        setupUI()
         self.setViewControllers([cityScreen], animated: false)
-        
     }
     
-    func setupBind() {
-        cityViewModel?.reloadPublisher
+    private func setupBind() {
+        cityViewModel.reloadPublisher
             .sink(receiveValue: { [weak self] city in
                 self?.mainCoordinator?.reconfigure(city: city)
             })
@@ -46,12 +44,15 @@ class TableVithCitiesCoordinator: UINavigationController, IWeatherListFlowContro
     }
     
     func goAddCity(city: City) {
-        db.addToFavorite(city: city)
-        cityViewModel?.addToFavorite(city: city)
+        cityViewModel.addToFavorite(city: city)
+    }
+    
+    private func setupUI() {
+        tabBarItem.image = UIImage(systemName: "play.circle")
+        title = "Table"
     }
     
     init() {
-        cityViewModel = CityViewModel(db: db)
         super.init(nibName: nil, bundle: nil)
         loadTableScreen()
         setupBind()
@@ -62,7 +63,7 @@ class TableVithCitiesCoordinator: UINavigationController, IWeatherListFlowContro
     }
     
     func reconfigure(city: WeatherModel) {
-        cityViewModel?.setGeoCity(city: city)
+        cityViewModel.setGeoCity(city: city)
     }
     
     required init?(coder: NSCoder) {

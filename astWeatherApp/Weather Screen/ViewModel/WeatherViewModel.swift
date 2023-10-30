@@ -45,7 +45,7 @@ class WeatherViewModel: IMainScreenWeatherViewModel {
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished:
-                   break
+                    break
                 }
             }, receiveValue: { [weak self] location in
                 
@@ -53,12 +53,12 @@ class WeatherViewModel: IMainScreenWeatherViewModel {
                 self?.loadWeather(from: nil)
                 self?.network(location: location, publisher: self?.geoPublisher)
             })
-      .store(in: &cancellables)
+            .store(in: &cancellables)
     }
     
     private func network(location: (lat: Double, lon: Double), publisher: PassthroughSubject<WeatherModel, Never>?) {
         network.loadWeather(requestType: .forecast, requestWithData: .geoLocation(location.lat, location.lon))
-            .sink {completion in
+            .sink { completion in
                 switch completion {
                 case .finished:
                     guard let data = self.data else { return }
@@ -66,8 +66,8 @@ class WeatherViewModel: IMainScreenWeatherViewModel {
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
-            } receiveValue: { weathers in
-                self.data = WeatherModel(from: weathers)
+            } receiveValue: { [weak self] weathers in
+                self?.data = WeatherModel(from: weathers)
             }
             .store(in: &self.cancellables)
     }

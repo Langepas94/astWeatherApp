@@ -9,40 +9,31 @@ import Foundation
 import UIKit
 import Combine
 
-//protocol IFlowController: UIViewController {
-//    func configureMainScreen(fetchType: WeatherTypeFetch)
-//    func showTable()
-//}
-
 class MainCoordinator: UITabBarController {
     
     private var cancellables = Set<AnyCancellable>()
     var mainScreenViewModel: WeatherViewModel = WeatherViewModel()
     
-    func configureCoordinator() {
-        
+    func goMainScreen() {
         
         mainScreenViewModel.coordinator = self
-
+        
         let mainWeatherViewController = MainWeatherScreen(viewModel: mainScreenViewModel)
         
-        let tableWithCitiesViewController = TableVithCitiesCoordinator()
+        let tableWithCitiesViewController = TableWithCitiesCoordinator()
         tableWithCitiesViewController.mainCoordinator = self
         
-        mainWeatherViewController.tabBarItem.image = UIImage(systemName: "house")
-        mainWeatherViewController.title = "Home"
+        setupBind(viewController: tableWithCitiesViewController)
         
-        tableWithCitiesViewController.tabBarItem.image = UIImage(systemName: "play.circle")
-        tableWithCitiesViewController.title = "Table"
-
         self.viewControllers = [mainWeatherViewController, tableWithCitiesViewController]
-        
+    }
+    
+    private func setupBind(viewController: TableWithCitiesCoordinator) {
         mainScreenViewModel.geoPublisher
             .sink(receiveValue: { model in
-                tableWithCitiesViewController.reconfigure(city: model)
+                viewController.reconfigure(city: model)
             })
             .store(in: &cancellables)
-        
     }
     
     func reconfigure(city: City?) {
@@ -55,7 +46,7 @@ class MainCoordinator: UITabBarController {
     
     init() {
         super.init(nibName: nil, bundle: nil)
-        configureCoordinator()
+        goMainScreen()
     }
     
     required init?(coder: NSCoder) {

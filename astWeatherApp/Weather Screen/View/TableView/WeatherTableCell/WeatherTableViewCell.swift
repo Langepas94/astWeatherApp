@@ -23,7 +23,7 @@ class WeekWeatherCell: UITableViewCell {
     
     let weatherImage: UIImageView = {
         let image = UIImageView()
-        let config = UIImage.SymbolConfiguration(pointSize: 25)
+        let config = UIImage.SymbolConfiguration(pointSize: 20)
         image.contentMode = .center
         image.translatesAutoresizingMaskIntoConstraints = false
         return image

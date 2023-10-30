@@ -12,9 +12,9 @@ class CityViewModel {
     private var cancellables = Set<AnyCancellable>()
     var updatePublisher = PassthroughSubject<WeatherModel, Never>()
     var reloadPublisher = PassthroughSubject<City, Never>()
-    weak var testcoordinator: TableVithCitiesCoordinator?
+    weak var testcoordinator: TableWithCitiesCoordinator?
     @Published var tableData: [City] = []
-    private var db: CitiesDatabase
+    private var db: CitiesDatabase = CitiesDatabase()
     private var networkManager = NetworkManager()
     var filteredNamesPublisher = PassthroughSubject<[City], Never>()
     @Published var geoCityData: WeatherModel?
@@ -34,6 +34,7 @@ class CityViewModel {
     }
     
     func addToFavorite(city: City) {
+        db.addToFavorite(city: city)
         self.tableData = db.readFavorite() ?? [City]()
     }
     
@@ -71,7 +72,7 @@ class CityViewModel {
         db.deleteCity(city: city)
     }
     
-    init(db: CitiesDatabase) {
-        self.db = db
-    }
+//    init(db: CitiesDatabase) {
+//        self.db = db
+//    }
 }

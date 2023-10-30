@@ -95,6 +95,9 @@ extension MainWeatherScreen {
         weekTable.dataSource = self
         weekTable.delegate = self
         
+        tabBarItem.image = UIImage(systemName: "house")
+        title = "Home"
+        
         cityNameLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(AppResources.MainScreen.Constraints.ViewController.CityNameLabel.top)
@@ -120,8 +123,10 @@ extension MainWeatherScreen {
     
     func uiUpdate() {
         viewModel.updatePublisher
-            .sink { dataModel in
-                self.configureScreenData(data: dataModel)
+            .sink { [weak self] dataModel in
+                DispatchQueue.main.async {
+                    self?.configureScreenData(data: dataModel)
+                }
             }
             .store(in: &cancellables)
     }
