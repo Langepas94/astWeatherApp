@@ -43,7 +43,6 @@ final class MainCoordinator: UITabBarController, IMainCoordinator {
     // MARK: - Reconfigure main screen
     func reconfigureMainScreen(city: City?) {
         switch city {
-            
         case .none:
             mainScreenViewModel.loadWeather(type: .geo)
         case .some( let city):

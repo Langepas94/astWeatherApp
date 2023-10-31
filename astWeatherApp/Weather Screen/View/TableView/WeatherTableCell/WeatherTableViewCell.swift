@@ -19,7 +19,7 @@ class WeekWeatherCell: UITableViewCell {
         label.text = AppResources.MainScreen.Labels.WeatherCell.defaulCellLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = AppResources.MainScreen.Colors.WeatherCell.cellTextColor
-        label.font = AppResources.UniversalElements.Fonts.cellFont
+        label.font = AppResources.MainScreen.Fonts.WeatherCell.cellFont
         return label
     }()
     
@@ -35,7 +35,7 @@ class WeekWeatherCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = AppResources.MainScreen.Colors.WeatherCell.cellTextColor
-        label.font = AppResources.UniversalElements.Fonts.cellFont
+        label.font = AppResources.MainScreen.Fonts.WeatherCell.cellFont
         return label
     }()
     

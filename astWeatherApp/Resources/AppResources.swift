@@ -19,6 +19,9 @@ struct AppResources {
                 static let degreesLabel = UIFont(name: "AppleSDGothicNeo-Bold", size: 63)
                 static let desxcriptionLabel = UIFont(name: "AppleSDGothicNeo-Medium", size: 13)
             }
+            struct WeatherCell {
+                static let cellFont = UIFont(name: "AppleSDGothicNeo-Medium", size: 20)
+            }
         }
         // MARK: Labels
         struct Labels {
@@ -122,8 +125,6 @@ struct AppResources {
     
     // MARK: - Universal elements
     struct UniversalElements {
-        struct Fonts {
-            static let cellFont = UIFont(name: "AppleSDGothicNeo-Medium", size: 20)
-        }
+
     }
 }
