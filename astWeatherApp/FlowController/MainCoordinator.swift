@@ -9,44 +9,53 @@ import Foundation
 import UIKit
 import Combine
 
-class MainCoordinator: UITabBarController {
+protocol IMainCoordinator {
+    func configureTabBar()
+}
+
+final class MainCoordinator: UITabBarController, IMainCoordinator {
     
+    // MARK: - Variables
     private var cancellables = Set<AnyCancellable>()
-    var mainScreenViewModel: WeatherViewModel = WeatherViewModel()
+    private var mainScreenViewModel: IMainScreenWeatherViewModel = WeatherViewModel()
+    private let tableWithCitiesViewController: IWeatherListFlowController = TableWithCitiesCoordinator()
     
-    func goMainScreen() {
-        
-        mainScreenViewModel.coordinator = self
-        
+    // MARK: Flow
+    func configureTabBar() {
         let mainWeatherViewController = MainWeatherScreen(viewModel: mainScreenViewModel)
-        
-        let tableWithCitiesViewController = TableWithCitiesCoordinator()
-        tableWithCitiesViewController.mainCoordinator = self
-        
         setupBind(viewController: tableWithCitiesViewController)
-        
         self.viewControllers = [mainWeatherViewController, tableWithCitiesViewController]
     }
     
-    private func setupBind(viewController: TableWithCitiesCoordinator) {
+    private func configureCoordinator() {
+        mainScreenViewModel.coordinator = self
+        tableWithCitiesViewController.mainCoordinator = self
+    }
+    
+    private func setupBind(viewController: IWeatherListFlowController) {
         mainScreenViewModel.geoPublisher
             .sink(receiveValue: { model in
-                viewController.reconfigure(city: model)
+                viewController.reconfigureGeoCellFromMainGeoScreen(city: model)
             })
             .store(in: &cancellables)
     }
     
-    func reconfigure(city: City?) {
-        if city == nil {
-            mainScreenViewModel.loadWeather(from: nil)
-        } else {
-            mainScreenViewModel.loadWeather(from: city)
+    // MARK: - Reconfigure main screen
+    func reconfigureMainScreen(city: City?) {
+        switch city {
+            
+        case .none:
+            mainScreenViewModel.loadWeather(type: .geo)
+        case .some( let city):
+            mainScreenViewModel.loadWeather(type: .city(city: city))
         }
     }
     
+    //MARK: - Init's
     init() {
         super.init(nibName: nil, bundle: nil)
-        goMainScreen()
+        configureTabBar()
+        configureCoordinator()
     }
     
     required init?(coder: NSCoder) {

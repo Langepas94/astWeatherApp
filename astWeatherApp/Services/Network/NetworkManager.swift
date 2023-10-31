@@ -8,6 +8,8 @@
 import Foundation
 import Combine
 
+let apiKey = "8264aa379828f21e9d1777c7600c6498"
+
 enum RequestType: String {
     case forecast = "/data/2.5/forecast"
 }

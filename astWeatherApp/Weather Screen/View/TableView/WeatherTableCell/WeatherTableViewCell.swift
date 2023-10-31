@@ -12,6 +12,8 @@ class WeekWeatherCell: UITableViewCell {
     
     static let id = "WeekWeatherCellID"
     
+    // MARK: - Variables
+    
     let timeLabel: UILabel = {
         let label = UILabel()
         label.text = AppResources.MainScreen.Labels.WeatherCell.defaulCellLabel
@@ -23,7 +25,7 @@ class WeekWeatherCell: UITableViewCell {
     
     let weatherImage: UIImageView = {
         let image = UIImageView()
-        let config = UIImage.SymbolConfiguration(pointSize: 20)
+        let config = UIImage.SymbolConfiguration(pointSize: 25)
         image.contentMode = .center
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
@@ -37,6 +39,7 @@ class WeekWeatherCell: UITableViewCell {
         return label
     }()
     
+    // MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUIs()
@@ -45,23 +48,15 @@ class WeekWeatherCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func configure(item: List) {
-        let date = item.dt ?? 0
-        let convertDate = Date(timeIntervalSince1970: TimeInterval(date))
-        let formats = convertDate.formatted(.dateTime.day().month(.twoDigits).hour().minute())
-        self.timeLabel.text = String(formats)
-        self.weatherImage.image = UIImage(named: item.weather?[0].icon ?? "")
-        self.degreeLabel.text = String(item.main?.temp ?? 0.0) + "°"
-    }
 }
 
+// MARK: - Setup UI
 extension WeekWeatherCell {
     func setupUIs() {
         contentView.addSubview(timeLabel)
         contentView.addSubview(weatherImage)
         contentView.addSubview(degreeLabel)
-       
+        
         timeLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(AppResources.MainScreen.Constraints.WeatherCell.leadingOffset)
             make.height.equalTo(AppResources.MainScreen.Constraints.WeatherCell.height)
@@ -79,5 +74,14 @@ extension WeekWeatherCell {
             make.height.equalTo(AppResources.MainScreen.Constraints.WeatherCell.height)
             make.centerY.equalToSuperview()
         }
+    }
+    
+    func configure(item: List) {
+        let date = item.dt ?? 0
+        let convertDate = Date(timeIntervalSince1970: TimeInterval(date))
+        let formats = convertDate.formatted(.dateTime.day().month(.twoDigits).hour().minute())
+        self.timeLabel.text = String(formats)
+        self.weatherImage.image = UIImage(named: item.weather?[0].icon ?? "")
+        self.degreeLabel.text = String(item.main?.temp?.rounded(numAfter: 1) ?? 0.0) + "°"
     }
 }

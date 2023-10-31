@@ -8,29 +8,53 @@
 import Foundation
 import Combine
 
-class CityViewModel {
-    private var cancellables = Set<AnyCancellable>()
+protocol ICityViewModel {
+    var updatePublisher: PassthroughSubject<WeatherModel, Never> { get }
+    var reloadPublisher: PassthroughSubject<City, Never> { get }
+    var tableDataPublisher: Published<[City]>.Publisher { get }
+    var geoDataPublisher: Published<WeatherModel?>.Publisher { get }
+    var filteredNamesPublisher: PassthroughSubject<[City], Never> { get }
+    var tableData: [City] { get set }
+    var coordinator: TableWithCitiesCoordinator? { get set }
+    var geoCityData: WeatherModel? { get }
+    func pressGeo()
+    func setGeoCity(city: WeatherModel)
+    func addToFavorite(city: City)
+    func readFavorite()
+    func searchCities(query: String)
+    func deleteCity(index: Int)
+    func pressCity(city: City)
+}
+
+final class CityViewModel: ObservableObject, ICityViewModel {
+    
+    //MARK: - Variables
+    var geoDataPublisher: Published<WeatherModel?>.Publisher {$geoCityData}
+    var tableDataPublisher: Published<[City]>.Publisher { $tableData }
     var updatePublisher = PassthroughSubject<WeatherModel, Never>()
     var reloadPublisher = PassthroughSubject<City, Never>()
-    weak var testcoordinator: TableWithCitiesCoordinator?
-    @Published var tableData: [City] = []
-    private var db: CitiesDatabase = CitiesDatabase()
-    private var networkManager = NetworkManager()
     var filteredNamesPublisher = PassthroughSubject<[City], Never>()
+    @Published internal var tableData: [City] = []
     @Published var geoCityData: WeatherModel?
     
+    weak var coordinator: TableWithCitiesCoordinator?
+    
+    private var db: CitiesDatabase = CitiesDatabase()
+    private var networkManager = NetworkManager()
+    private var cancellables = Set<AnyCancellable>()
+    
+    //MARK: - Flow
+    
     func pressCity(city: City) {
-        print("press city")
         reloadPublisher.send(city)
     }
     
     func pressGeo() {
-        print("press geo")
-        testcoordinator?.pressGeo()
+        coordinator?.geoCellPressed()
     }
     
     func setGeoCity(city: WeatherModel) {
-            self.geoCityData = city
+        self.geoCityData = city
     }
     
     func addToFavorite(city: City) {
@@ -42,21 +66,7 @@ class CityViewModel {
         self.tableData = db.readFavorite() ?? [City]()
     }
     
-    func loadAllCities() {
-        db.loadAllCities()
-            .receive(on: DispatchQueue.main)
-            .sink { completion in
-                switch completion {
-                case .finished: break
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
-            } receiveValue: {_ in
-                
-            }
-            .store(in: &cancellables)
-    }
-    
+    // MARK: Search
     func searchCities(query: String) {
         db.searchCities(query: query)
             .receive(on: DispatchQueue.main)
@@ -72,7 +82,9 @@ class CityViewModel {
         db.deleteCity(city: city)
     }
     
-//    init(db: CitiesDatabase) {
-//        self.db = db
-//    }
+    // MARK: - Init
+    init() {
+        readFavorite()
+//        loadAllCities()
+    }
 }

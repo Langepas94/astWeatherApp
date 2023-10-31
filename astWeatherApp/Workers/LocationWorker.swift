@@ -13,9 +13,10 @@ class LocationWorker: NSObject, ObservableObject {
     
     private let locationManager: CLLocationManager = {
         let location = CLLocationManager()
-        location.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        location.desiredAccuracy = kCLLocationAccuracyKilometer
         return location
     }()
+    
     let locationPublisher = PassthroughSubject<(lat: Double, lon: Double), Never>()
     
     var location = (lat: 0.0, lon: 0.0)
@@ -23,6 +24,7 @@ class LocationWorker: NSObject, ObservableObject {
         locationManager.requestWhenInUseAuthorization()
     }
     
+    //MARK: - Request geo
     func requestGeoSwitcher() {
         locationManager.delegate = self
         
@@ -30,34 +32,28 @@ class LocationWorker: NSObject, ObservableObject {
             
         case .notDetermined:
             requestGeoAccess()
-            
             getGeo()
         case .restricted:
-            
             requestGeoAccess()
             getGeo()
         case .denied:
-            
             requestGeoAccess()
             getGeo()
         case .authorizedAlways:
             getGeo()
-            
         case .authorizedWhenInUse:
             getGeo()
-            
         @unknown default:
-            
             requestGeoAccess()
         }
     }
     
     func getGeo() {
         locationManager.startUpdatingLocation()
-      
     }
 }
 
+//MARK: Geo Delegate
 extension LocationWorker: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {

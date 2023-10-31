@@ -9,29 +9,54 @@ import Foundation
 import UIKit
 import SnapKit
 
-class ResultTableCitiesViewController: UIViewController {
+protocol IResultTableCitiesViewController: UISearchController {
+    func configureData(cityArray: [City])
+    func reload()
+}
+
+final class ResultTableCitiesViewController:UISearchController, IResultTableCitiesViewController {
+    
     // MARK: - elements
-    let tableView: UITableView = {
-       let table = UITableView()
+    private let tableView: UITableView = {
+        let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "TableView")
+        table.register(UITableViewCell.self, forCellReuseIdentifier: AppResources.TableWithCities.Labels.ResultTableCitiesViewController.resultTable)
         table.separatorStyle = .none
         return table
     }()
     
-    let viewController: AddCityViewController
+    private var filteredNames: [City] = []
     
-    public var filteredNames: [City] = []
+    let viewController: IAddCityViewController
     
+    // MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUi()
         tableView.dataSource = self
         tableView.delegate = self
     }
-    init(viewController: AddCityViewController) {
+    
+    // MARK: Flow
+    func reload() {
+        self.tableView.reloadData()
+    }
+    
+    func configureData(cityArray: [City]) {
+        self.filteredNames = cityArray
+    }
+    
+    private func createConfig(index: Int) -> UIListContentConfiguration {
+        var config = UIListContentConfiguration.cell()
+        config.text = "\(String(describing: filteredNames[index].name ?? "")) || \(String(describing: filteredNames[index].country ?? ""))"
+        return config
+        
+    }
+    
+    init(viewController: IAddCityViewController) {
         self.viewController = viewController
         super.init(nibName: nil, bundle: nil)
+        searchBar.placeholder = AppResources.TableWithCities.Labels.ResultTableCitiesViewController.searchBarText
     }
     
     required init?(coder: NSCoder) {
@@ -39,43 +64,28 @@ class ResultTableCitiesViewController: UIViewController {
     }
 }
 
-// MARK: extension Datasource
+// MARK: extension Datasource & Delegate
 extension ResultTableCitiesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         filteredNames.count
     }
     
- // MARK: - Setup Cell
+    // MARK: - Setup Cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
-            withIdentifier: "TableView",
+            withIdentifier: AppResources.TableWithCities.Labels.ResultTableCitiesViewController.resultTable,
             for: indexPath)
-        
-        var config = cell.defaultContentConfiguration()
-        config.text = "\(String(describing: filteredNames[indexPath.row].name ?? "")) || \(String(describing: filteredNames[indexPath.row].country ?? ""))"
         cell.selectionStyle = .none
-        cell.contentConfiguration = config
+        cell.contentConfiguration = createConfig(index: indexPath.row)
         return cell
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        let vc = viewController
-//        vc.city = filteredNames[indexPath.row]
-//        vc.titleCity = filteredNames[indexPath.row].name
-        vc.configureData(city: filteredNames[indexPath.row])
-        vc.modalPresentationStyle = .popover
-        vc.popoverPresentationController?.delegate = self
-        vc.preferredContentSize = CGSize(width: 330, height: 120)
-        vc.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
-        vc.popoverPresentationController?.sourceView = self.tableView
-            present(vc, animated: true)
-    }
-}
-
-extension ResultTableCitiesViewController: UIPopoverPresentationControllerDelegate {
-    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
-        .none
+        viewController.configureData(city: filteredNames[indexPath.row])
+        viewController.modalPresentationStyle = .pageSheet
+        viewController.sheetPresentationController?.detents = [.medium()]
+        viewController.sheetPresentationController?.prefersGrabberVisible = true
+        present(viewController, animated: true)
     }
 }
 
@@ -85,7 +95,8 @@ extension ResultTableCitiesViewController {
         view.backgroundColor = .white
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.bottom.leading.trailing.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
     }
 }

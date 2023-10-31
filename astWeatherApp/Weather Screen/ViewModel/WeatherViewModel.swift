@@ -8,21 +8,25 @@
 import Foundation
 import Combine
 
-protocol IMainScreenWeatherViewModel {
-    var network: INetworkManager { get set }
-    var updatePublisher: PassthroughSubject<WeatherModel, Never> { get set }
-    var geoPublisher: PassthroughSubject<WeatherModel, Never> { get set }
+protocol IMainScreenWeatherViewModel: AnyObject {
+    var updatePublisher: PassthroughSubject<WeatherModel, Never> { get }
+    var geoPublisher: PassthroughSubject<WeatherModel, Never> { get }
     var coordinator: MainCoordinator? { get set }
-    var data: WeatherModel? { get set }
-    func loadWeather(from city: City?)
+    var data: WeatherModel? { get }
+    func loadWeather(type: FetchType)
 }
 
-class WeatherViewModel: IMainScreenWeatherViewModel {
+enum FetchType {
+    case city(city: City)
+    case geo
+}
+
+final class WeatherViewModel: IMainScreenWeatherViewModel {
     
     // MARK: Variables
     var geoPublisher = PassthroughSubject<WeatherModel, Never>()
     weak var coordinator: MainCoordinator?
-    var network: INetworkManager = NetworkManager()
+    private var network: INetworkManager = NetworkManager()
     var data: WeatherModel?
     var updatePublisher = PassthroughSubject<WeatherModel, Never>()
     
@@ -30,15 +34,16 @@ class WeatherViewModel: IMainScreenWeatherViewModel {
     private var cancellables = Set<AnyCancellable>()
     private var locations = (lat: 0.0, lon: 0.0)
     
-    func loadWeather(from city: City?) {
-        if city != nil {
-            network(location: (city?.coord?.lat ?? 0.0, city?.coord?.lon ?? 0.0), publisher: updatePublisher)
-        } else {
+    func loadWeather(type: FetchType) {
+        switch type {
+        case .city(city: let city):
+            network(location: (city.coord?.lat ?? 0.0, city.coord?.lon ?? 0.0), publisher: updatePublisher)
+        case .geo:
             locations = locationWorker.location
-            network(location: locations, publisher: updatePublisher)
+                       network(location: locations, publisher: updatePublisher)
         }
     }
-    
+    // MARK: Location
     private func loadLocation() {
         locationWorker.requestGeoSwitcher()
         locationWorker.locationPublisher
@@ -47,15 +52,15 @@ class WeatherViewModel: IMainScreenWeatherViewModel {
                 case .finished:
                     break
                 }
-            }, receiveValue: { [weak self] location in
-                
-                self?.locations = location
-                self?.loadWeather(from: nil)
-                self?.network(location: location, publisher: self?.geoPublisher)
+            }, receiveValue: { location in
+                self.locations = location
+                self.loadWeather(type: .geo)
+                self.network(location: location, publisher: self.geoPublisher)
             })
             .store(in: &cancellables)
     }
     
+    // MARK: Network
     private func network(location: (lat: Double, lon: Double), publisher: PassthroughSubject<WeatherModel, Never>?) {
         network.loadWeather(requestType: .forecast, requestWithData: .geoLocation(location.lat, location.lon))
             .sink { completion in
@@ -72,6 +77,7 @@ class WeatherViewModel: IMainScreenWeatherViewModel {
             .store(in: &self.cancellables)
     }
     
+    // MARK: - Init
     init() {
         loadLocation()
     }

@@ -9,8 +9,10 @@ import Foundation
 import UIKit
 
 struct AppResources {
+    
     // MARK: - Main Screen
     struct MainScreen {
+        // MARK: Fonts
         struct Fonts {
             struct ViewController {
                 static let cityNameLabel = UIFont(name: "AppleSDGothicNeo-Medium", size: 32)
@@ -18,19 +20,27 @@ struct AppResources {
                 static let desxcriptionLabel = UIFont(name: "AppleSDGothicNeo-Medium", size: 13)
             }
         }
-        
+        // MARK: Labels
         struct Labels {
             struct WeatherCell {
                 static let defaulCellLabel = "Loading"
             }
-        }
-        
-        struct Colors {
-            struct WeatherCell {
-                static let cellTextColor = UIColor.black
+            struct TabBar {
+                static let image = UIImage(systemName: "location.circle.fill")
+                static let title = "Location weather"
+                
             }
         }
-        
+        // MARK: Colors
+        struct Colors {
+            struct WeatherCell {
+                static let cellTextColor = UIColor.label
+            }
+            struct ViewController {
+                static let label = UIColor.label
+            }
+        }
+        // MARK: Constraints
         struct Constraints {
             struct WeatherCell {
                 static let leadingOffset = 5
@@ -58,6 +68,59 @@ struct AppResources {
         }
     }
     
+    //MARK: - Table Screen
+    struct TableWithCities {
+        struct Labels {
+            struct TabBar {
+                static let image = UIImage(systemName: "map.fill")
+                static let title = "Favorites"
+            }
+            
+            struct AddCityViewController {
+                static let buttonTitle = "Add city to Favorites"
+            }
+            
+            struct ResultTableCitiesViewController {
+                static let resultTable = "ResultTableView"
+                static let searchBarText = "Search for your new favorite city"
+            }
+            
+            struct CityTableViewController {
+                static let basicCellID = "CityNameCell"
+                static let geoCellID = "GeoCell"
+                static let screenTitle = "Favorites"
+                
+            }
+        }
+        // MARK: Constraints
+        struct Constraints {
+            struct AddCityViewController {
+                static let cornerRadius = CGFloat(10)
+                static let topOffsetLarge = 36
+                static let typicalOffset = 16
+            }
+            
+            
+        }
+        // MARK: Colors
+        struct Colors {
+            static let buttonTitle = UIColor.white
+            static let buttonBackground = UIColor.lightGray
+            static let textColor = UIColor.label
+            static let background = UIColor.systemBackground
+        }
+        
+        // MARK: Fonts
+        struct Fonts {
+            struct AddCityViewController {
+                static let degreeLabel = UIFont(name: "AppleSDGothicNeo-Medium", size: 37)
+                static let cityName = UIFont(name: "AppleSDGothicNeo-Medium", size: 30)
+                static let smallText = UIFont(name: "AppleSDGothicNeo-Medium", size: 13)
+            }
+        }
+    }
+    
+    // MARK: - Universal elements
     struct UniversalElements {
         struct Fonts {
             static let cellFont = UIFont(name: "AppleSDGothicNeo-Medium", size: 20)

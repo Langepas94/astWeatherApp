@@ -10,31 +10,36 @@ import UIKit
 import SnapKit
 import Combine
 
-class AddCityViewController: UIViewController {
+protocol IAddCityViewController: UIViewController {
+    func configureData(city: City)
+    var viewModel: IAddCityViewModel { get set }
+}
+
+final class AddCityViewController: UIViewController, IAddCityViewController {
     
-    let mainCityLabel: UILabel = {
+    // MARK: - Elements
+    private let mainCityLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.font = AppResources.TableWithCities.Fonts.AddCityViewController.cityName
         return label
     }()
     
-    let actionButton: UIButton = {
+    private let actionButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Add city", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .lightGray
-        button.layer.cornerRadius = 10
+        button.setTitle(AppResources.TableWithCities.Labels.AddCityViewController.buttonTitle, for: .normal)
+        button.setTitleColor(AppResources.TableWithCities.Colors.buttonTitle, for: .normal)
+        button.backgroundColor = AppResources.TableWithCities.Colors.buttonBackground
+        button.layer.cornerRadius = AppResources.TableWithCities.Constraints.AddCityViewController.cornerRadius
         return button
     }()
     
     private let degreesLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .black
-        label.text = ""
-        label.font = .systemFont(ofSize: 37)
+        label.textColor = AppResources.TableWithCities.Colors.textColor
+        label.font = AppResources.TableWithCities.Fonts.AddCityViewController.degreeLabel
         return label
     }()
     
@@ -47,41 +52,49 @@ class AddCityViewController: UIViewController {
     private let descriptionWeatherLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .black
+        label.textColor = AppResources.TableWithCities.Colors.textColor
         label.numberOfLines = 1
         label.textAlignment = .left
-        label.text = ""
-        label.font = .systemFont(ofSize: 13)
+        label.font = AppResources.TableWithCities.Fonts.AddCityViewController.smallText
         return label
     }()
     
     private let descriptionDegreesLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .black
-        label.font = .systemFont(ofSize: 13)
+        label.textColor = AppResources.TableWithCities.Colors.textColor
+        label.font = AppResources.TableWithCities.Fonts.AddCityViewController.smallText
         return label
     }()
-    
-    let viewModel: IAddCityViewModel
-    
-    var cancellables: Set<AnyCancellable> = []
-//    var callCity: ((String?) -> ())?
-//    var titleCity: String?
     private var city: City?
     
+    var viewModel: IAddCityViewModel
+    var cancellables: Set<AnyCancellable> = []
+  
+    // MARK: - View lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         actionButton.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
-//        mainCityLabel.text = titleCity ?? ""
-        getData()
-        
     }
     
-    func configurePopView(item: WeatherModel) {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getData()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.mainCityLabel.text = ""
+        self.degreesLabel.text = ""
+        self.descriptionWeatherLabel.text = ""
+    }
+    
+    // MARK: - Flow
+   private func configurePopView(item: WeatherModel) {
         self.mainCityLabel.text = item.cityName
-        self.degreesLabel.text = String(item.nowDegrees)
+        self.degreesLabel.text = item.textNowDescription
         self.weatherImage.image = UIImage(named: item.icon)
         self.descriptionWeatherLabel.text = item.description
     }
@@ -105,7 +118,7 @@ class AddCityViewController: UIViewController {
         self.dismiss(animated: true)
     }
     
-    func getData() {
+    private func getData() {
         guard let city = city else { return }
         viewModel.fetchWeather(city: city)
         viewModel.updatePublisher
@@ -116,8 +129,9 @@ class AddCityViewController: UIViewController {
     }
 }
 
+// MARK: - Setup UI
 extension AddCityViewController {
-    func setupUI() {
+    private func setupUI() {
         
         view.addSubview(mainCityLabel)
         view.addSubview(actionButton)
@@ -125,30 +139,32 @@ extension AddCityViewController {
         view.addSubview(weatherImage)
         view.addSubview(descriptionWeatherLabel)
         view.addSubview(descriptionDegreesLabel)
-        view.backgroundColor = .white
+        view.backgroundColor = AppResources.TableWithCities.Colors.background
         
-        actionButton.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.width.equalTo(100)
-            make.trailing.equalToSuperview().offset(-6)
-        }
         mainCityLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(16)
+            make.top.equalToSuperview().offset(AppResources.TableWithCities.Constraints.AddCityViewController.topOffsetLarge)
+            make.centerX.equalToSuperview()
+        }
+        
+        degreesLabel.snp.makeConstraints { make in
+            make.top.equalTo(mainCityLabel.snp.bottom).offset(AppResources.TableWithCities.Constraints.AddCityViewController.typicalOffset)
             make.centerX.equalToSuperview()
         }
         
         weatherImage.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.leading.equalToSuperview().offset(12)
-        }
-        degreesLabel.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.leading.equalTo(weatherImage.snp.trailing).offset(12)
+            make.top.equalTo(degreesLabel.snp.bottom).offset(AppResources.TableWithCities.Constraints.AddCityViewController.typicalOffset)
+            make.centerX.equalToSuperview()
         }
         
         descriptionWeatherLabel.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-16)
-            make.leading.equalTo(weatherImage.snp.leading)
+            make.top.equalTo(weatherImage.snp.bottom).offset(AppResources.TableWithCities.Constraints.AddCityViewController.typicalOffset)
+            make.centerX.equalToSuperview()
+        }
+
+        actionButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(AppResources.TableWithCities.Constraints.AddCityViewController.typicalOffset)
+            make.top.equalTo(descriptionWeatherLabel.snp.bottom).offset(AppResources.TableWithCities.Constraints.AddCityViewController.typicalOffset)
         }
     }
 }

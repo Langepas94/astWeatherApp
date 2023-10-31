@@ -8,23 +8,26 @@
 import Foundation
 import Combine
 
-protocol IAddCityViewModel {
+protocol IAddCityViewModel: AnyObject {
     func fetchWeather(city: City)
-    var updatePublisher: PassthroughSubject<WeatherModel, Never> { get set }
+    var updatePublisher: PassthroughSubject<WeatherModel, Never> { get }
     var data: WeatherModel? { get set }
     func addCity(city: City)
     var coordinator: TableWithCitiesCoordinator? { get set }
 }
 
-class AddCityViewModel: IAddCityViewModel {
+final class AddCityViewModel: IAddCityViewModel {
     
-    private let network = NetworkManager()
-    private var cancellables = Set<AnyCancellable>()
+    //MARK: Variables
     var updatePublisher: PassthroughSubject<WeatherModel, Never> = PassthroughSubject<WeatherModel, Never>()
     var data: WeatherModel?
     
     weak var coordinator: TableWithCitiesCoordinator?
     
+    private let network = NetworkManager()
+    private var cancellables = Set<AnyCancellable>()
+    
+    //MARK: - Fetch Weather
     func fetchWeather(city: City) {
         guard let coord = city.coord, let lat = coord.lat, let lon = coord.lon else { return }
         self.network.loadWeather(requestType: .forecast, requestWithData: .geoLocation(lat, lon))
@@ -36,13 +39,14 @@ class AddCityViewModel: IAddCityViewModel {
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
-            } receiveValue: { weathers in
-                self.data = WeatherModel(from: weathers)
+            } receiveValue: { [weak self] weathers in
+                self?.data = WeatherModel(from: weathers)
             }
             .store(in: &self.cancellables)
     }
     
+    // MARK: Add city
     func addCity(city: City) {
-        coordinator?.goAddCity(city: city)
+        coordinator?.addCityToFavorite(city: city)
     }
 }

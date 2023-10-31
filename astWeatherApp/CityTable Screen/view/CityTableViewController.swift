@@ -9,43 +9,45 @@ import Foundation
 import UIKit
 import Combine
 
-class CityTableViewController: UIViewController {
+protocol ICityTableViewController: UIViewController {
+    var viewModel: ICityViewModel { get set }
+}
+
+final class CityTableViewController: UIViewController, ICityTableViewController {
     
-    //    var data: [WeatherModel] = [WeatherModel()]
-    var viewModel: CityViewModel
+    // MARK: - Variables
+    var viewModel: ICityViewModel
     
-    private var searchController: UISearchController
+    private var searchView: IResultTableCitiesViewController
     
     private lazy var tableView: UITableView = {
         let table = UITableView()
         table.showsVerticalScrollIndicator = false
         table.showsHorizontalScrollIndicator = false
         table.translatesAutoresizingMaskIntoConstraints = false
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "kek")
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "bek")
+        table.register(UITableViewCell.self, forCellReuseIdentifier: AppResources.TableWithCities.Labels.CityTableViewController.basicCellID)
+        table.register(UITableViewCell.self, forCellReuseIdentifier: AppResources.TableWithCities.Labels.CityTableViewController.geoCellID)
         table.dataSource = self
         table.delegate = self
         return table
     }()
     
-    var cancellables: Set<AnyCancellable> = []
+    private var cancellables: Set<AnyCancellable> = []
     private var searchPublisher = PassthroughSubject<String, Never>()
     
+    // MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
-        title = "Favorites"
-        searchController.searchBar.placeholder = "Search for your new favorite city"
-        searchController.searchResultsUpdater = self
-        navigationItem.searchController = searchController
-        view.addSubview(tableView)
-        
-        tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        viewModel.readFavorite()
-        viewModel.$tableData
+        navigationItem.searchController = searchView
+        searchView.searchResultsUpdater = self
+        searchView.delegate = self
+        setupUI()
+        bindings()
+    }
+    
+    // MARK: - Bindings
+    private func bindings() {
+        viewModel.tableDataPublisher
             .sink { _ in
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
@@ -53,9 +55,7 @@ class CityTableViewController: UIViewController {
             }
             .store(in: &cancellables)
         
-        viewModel.loadAllCities()
-        
-        viewModel.$geoCityData
+        viewModel.geoDataPublisher
             .sink { _ in
                 self.tableView.reloadData()
             }
@@ -65,24 +65,25 @@ class CityTableViewController: UIViewController {
             .debounce(for: 0.5, scheduler: DispatchQueue.main)
             .removeDuplicates()
             .compactMap({ $0 })
-            .sink(receiveValue: {[weak self] (searchString: String) in
+            .sink(receiveValue: { [weak self] (searchString: String) in
                 guard let self = self else { return }
                 viewModel.searchCities(query: searchString)
                 viewModel.filteredNamesPublisher
-                    .sink { cities in
-                        let vc = self.searchController.searchResultsController as? ResultTableCitiesViewController
-                        vc?.filteredNames = cities
-                        vc?.tableView.reloadData()
+                    .sink { [weak self] cities in
+                        self?.searchView.configureData(cityArray: cities)
+                        self?.searchView.reload()
                     }
                     .store(in: &cancellables)
             })
             .store(in: &cancellables)
     }
     
-    init(viewModel: CityViewModel, searchController: UISearchController) {
+    // MARK: - Init's
+    init(viewModel: ICityViewModel, searchView: IResultTableCitiesViewController) {
+        self.searchView = searchView
         self.viewModel = viewModel
-        self.searchController = searchController
         super.init(nibName: nil, bundle: nil)
+        
     }
     
     required init?(coder: NSCoder) {
@@ -90,6 +91,19 @@ class CityTableViewController: UIViewController {
     }
 }
 
+// MARK: - Setup UI
+extension CityTableViewController {
+    private func setupUI() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = AppResources.TableWithCities.Labels.CityTableViewController.screenTitle
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+}
+
+// MARK: - Table delegate & datasource
 extension CityTableViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.tableData.count + 1
@@ -97,11 +111,11 @@ extension CityTableViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "bek", for: indexPath)
-            cell.textLabel?.text = viewModel.geoCityData?.cityName
+            let cell = tableView.dequeueReusableCell(withIdentifier: AppResources.TableWithCities.Labels.CityTableViewController.geoCellID, for: indexPath)
+            cell.textLabel?.text = viewModel.geoCityData?.cityName ?? "Globe"
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "kek", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: AppResources.TableWithCities.Labels.CityTableViewController.basicCellID, for: indexPath)
             cell.textLabel?.text = viewModel.tableData[indexPath.row - 1].name
             return cell
         }
@@ -117,20 +131,34 @@ extension CityTableViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if indexPath.row != 0 {
+        if indexPath.row > 0 {
             if editingStyle == .delete {
                 viewModel.deleteCity(index: indexPath.row - 1)
                 tableView.deleteRows(at: [indexPath], with: .fade)
             }
         }
     }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        if indexPath.row == 0 {
+            return false
+        }
+        return true
+    }
 }
 
-extension CityTableViewController: UISearchResultsUpdating {
+// MARK: - SearchBar delegate
+extension CityTableViewController: UISearchResultsUpdating, UISearchControllerDelegate {
     func updateSearchResults(for searchController: UISearchController) {
-        
         guard let text = searchController.searchBar.text else { return }
-        
         searchPublisher.send(text)
+    }
+    
+    func willPresentSearchController(_ searchController: UISearchController) {
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
+    func willDismissSearchController(_ searchController: UISearchController) {
+        self.tabBarController?.tabBar.isHidden = false
     }
 }

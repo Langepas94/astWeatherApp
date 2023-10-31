@@ -7,8 +7,6 @@
 
 import Foundation
 
-let apiKey = "8264aa379828f21e9d1777c7600c6498"
-
 struct NetworkWeatherDataModel: Codable {
     let cod: String?
     let message: Int?

@@ -9,61 +9,66 @@ import Foundation
 import UIKit
 import Combine
 
-protocol IWeatherListFlowController {
+protocol IWeatherListFlowController: UINavigationController {
     func loadTableScreen()
-    func goAddCity(city: City)
+    func addCityToFavorite(city: City)
     var mainCoordinator: MainCoordinator? { get set }
+    func reconfigureGeoCellFromMainGeoScreen(city: WeatherModel)
 }
 
-class TableWithCitiesCoordinator: UINavigationController, IWeatherListFlowController {
+final class TableWithCitiesCoordinator: UINavigationController, IWeatherListFlowController {
     var mainCoordinator: MainCoordinator?
-    var cityViewModel: CityViewModel = CityViewModel()
+    var cityViewModel: ICityViewModel = CityViewModel()
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Load Screen
     func loadTableScreen() {
-    
-        var addViewModel: IAddCityViewModel = AddCityViewModel()
-        addViewModel.coordinator = self
-        let addViewController = AddCityViewController(viewModel: addViewModel)
-      
-        let resultScreen = ResultTableCitiesViewController(viewController: addViewController)
-        let searchScreenController: UISearchController = UISearchController(searchResultsController: resultScreen)
-        
-        cityViewModel.testcoordinator = self
-        let cityScreen = CityTableViewController(viewModel: cityViewModel, searchController: searchScreenController)
         setupUI()
+        
+        let addViewModel: IAddCityViewModel = AddCityViewModel()
+        addViewModel.coordinator = self
+        let addViewController: IAddCityViewController = AddCityViewController(viewModel: addViewModel)
+        
+        let searchScreenController: IResultTableCitiesViewController = ResultTableCitiesViewController(viewController: addViewController)
+        
+        cityViewModel.coordinator = self
+        
+        let cityScreen: ICityTableViewController = CityTableViewController(viewModel: cityViewModel, searchView: searchScreenController)
         self.setViewControllers([cityScreen], animated: false)
     }
     
     private func setupBind() {
         cityViewModel.reloadPublisher
             .sink(receiveValue: { [weak self] city in
-                self?.mainCoordinator?.reconfigure(city: city)
+                self?.mainCoordinator?.reconfigureMainScreen(city: city)
             })
             .store(in: &cancellables)
     }
     
-    func goAddCity(city: City) {
+    private func setupUI() {
+        tabBarItem.image = AppResources.TableWithCities.Labels.TabBar.image
+        title = AppResources.TableWithCities.Labels.TabBar.title
+    }
+    
+    // MARK: Add to favorite
+    func addCityToFavorite(city: City) {
         cityViewModel.addToFavorite(city: city)
     }
     
-    private func setupUI() {
-        tabBarItem.image = UIImage(systemName: "play.circle")
-        title = "Table"
+    //MARK: - Coordinator flow
+    func geoCellPressed() {
+        mainCoordinator?.reconfigureMainScreen(city: nil)
     }
     
+    func reconfigureGeoCellFromMainGeoScreen(city: WeatherModel) {
+        cityViewModel.setGeoCity(city: city)
+    }
+    
+    // MARK: - Init
     init() {
         super.init(nibName: nil, bundle: nil)
         loadTableScreen()
         setupBind()
-    }
-    
-    func pressGeo() {
-        mainCoordinator?.reconfigure(city: nil)
-    }
-    
-    func reconfigure(city: WeatherModel) {
-        cityViewModel.setGeoCity(city: city)
     }
     
     required init?(coder: NSCoder) {
