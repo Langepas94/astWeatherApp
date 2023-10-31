@@ -24,7 +24,6 @@ final class TableWithCitiesCoordinator: UINavigationController, IWeatherListFlow
     // MARK: - Load Screen
     func loadTableScreen() {
         setupUI()
-        
         let addViewModel: IAddCityViewModel = AddCityViewModel()
         addViewModel.coordinator = self
         let addViewController: IAddCityViewController = AddCityViewController(viewModel: addViewModel)

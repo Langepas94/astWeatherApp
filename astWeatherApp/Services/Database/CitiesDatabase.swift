@@ -41,8 +41,7 @@ class CitiesDatabase: IDataBase {
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
-            } receiveValue: {_ in
-                
+            } receiveValue: { _ in
             }
             .store(in: &cancellables)
     }
@@ -60,37 +59,37 @@ class CitiesDatabase: IDataBase {
     }
     // MARK: Add Favorite
     func addToFavorite(city: City) {
-        if let data = userDefaults.data(forKey: "city") {
+        if let data = userDefaults.data(forKey: AppResources.DB.userDefaultsKey) {
             guard var citiess = try? JSONDecoder().decode([City].self, from: data) else { return }
             if !citiess.contains(where: { $0.id == city.id }) {
                 citiess.append(city)
                 if let newCities = try? JSONEncoder().encode(citiess) {
-                    userDefaults.set(newCities, forKey: "city")
+                    userDefaults.set(newCities, forKey: AppResources.DB.userDefaultsKey)
                 }
             }
         } else {
             var newCities = [City]()
             newCities.append(city)
             if let newCitiess = try? JSONEncoder().encode(newCities) {
-                userDefaults.set(newCitiess, forKey: "city")
+                userDefaults.set(newCitiess, forKey: AppResources.DB.userDefaultsKey)
             }
         }
         userDefaults.synchronize()
     }
     // MARK: Read Favorites
     func readFavorite() -> [City]? {
-        guard let data = userDefaults.data(forKey: "city") else { return nil}
+        guard let data = userDefaults.data(forKey: AppResources.DB.userDefaultsKey) else { return nil}
         let cities = try? JSONDecoder().decode([City].self, from: data)
         return cities
     }
     // MARK: Delete favorite
     func deleteCity(city: City) {
-        if let data = userDefaults.data(forKey: "city") {
+        if let data = userDefaults.data(forKey: AppResources.DB.userDefaultsKey) {
             guard var citiess = try? JSONDecoder().decode([City].self, from: data) else { return }
             if let index = citiess.firstIndex(where: {$0.id == city.id}) {
                 citiess.remove(at: index)
                 if let newCitiess = try? JSONEncoder().encode(citiess) {
-                    userDefaults.set(newCitiess, forKey: "city")
+                    userDefaults.set(newCitiess, forKey: AppResources.DB.userDefaultsKey)
                     userDefaults.synchronize()
                 }
             }

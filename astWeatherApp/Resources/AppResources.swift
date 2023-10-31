@@ -123,8 +123,10 @@ struct AppResources {
         }
     }
     
-    // MARK: - Universal elements
-    struct UniversalElements {
-
+    // MARK: - DB
+    struct DB {
+        static let userDefaultsKey = "city"
     }
 }
+
+
