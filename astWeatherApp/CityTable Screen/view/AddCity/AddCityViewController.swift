@@ -28,7 +28,7 @@ final class AddCityViewController: UIViewController, IAddCityViewController {
     private let actionButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(AppResources.TableWithCities.Labels.AddCityViewController.buttonTitle, for: .normal)
+        button.setTitle(AppResources.TableWithCities.TextConstant.AddCityViewController.buttonTitle, for: .normal)
         button.setTitleColor(AppResources.TableWithCities.Colors.buttonTitle, for: .normal)
         button.backgroundColor = AppResources.TableWithCities.Colors.buttonBackground
         button.layer.cornerRadius = AppResources.TableWithCities.Constraints.AddCityViewController.cornerRadius

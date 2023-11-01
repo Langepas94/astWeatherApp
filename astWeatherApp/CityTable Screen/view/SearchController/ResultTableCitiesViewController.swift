@@ -20,7 +20,7 @@ final class ResultTableCitiesViewController:UISearchController, IResultTableCiti
     private let tableView: UITableView = {
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
-        table.register(UITableViewCell.self, forCellReuseIdentifier: AppResources.TableWithCities.Labels.ResultTableCitiesViewController.resultTable)
+        table.register(UITableViewCell.self, forCellReuseIdentifier: AppResources.TableWithCities.TextConstant.ResultTableCitiesViewController.resultTable)
         table.separatorStyle = .none
         return table
     }()
@@ -56,7 +56,7 @@ final class ResultTableCitiesViewController:UISearchController, IResultTableCiti
     init(viewController: IAddCityViewController) {
         self.viewController = viewController
         super.init(nibName: nil, bundle: nil)
-        searchBar.placeholder = AppResources.TableWithCities.Labels.ResultTableCitiesViewController.searchBarText
+        searchBar.placeholder = AppResources.TableWithCities.TextConstant.ResultTableCitiesViewController.searchBarText
     }
     
     required init?(coder: NSCoder) {
@@ -73,7 +73,7 @@ extension ResultTableCitiesViewController: UITableViewDataSource, UITableViewDel
     // MARK: - Setup Cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
-            withIdentifier: AppResources.TableWithCities.Labels.ResultTableCitiesViewController.resultTable,
+            withIdentifier: AppResources.TableWithCities.TextConstant.ResultTableCitiesViewController.resultTable,
             for: indexPath)
         cell.selectionStyle = .none
         cell.contentConfiguration = createConfig(index: indexPath.row)

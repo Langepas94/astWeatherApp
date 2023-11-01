@@ -31,7 +31,7 @@ class CitiesDatabase: IDataBase {
     let userDefaults = UserDefaults.standard
     private var cancellables = Set<AnyCancellable>()
     
-    // MARK: Search
+    // MARK: Load
     func loadCities() {
         loadAllCities()
             .receive(on: DispatchQueue.main)

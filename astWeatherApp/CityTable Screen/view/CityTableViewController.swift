@@ -25,8 +25,8 @@ final class CityTableViewController: UIViewController, ICityTableViewController 
         table.showsVerticalScrollIndicator = false
         table.showsHorizontalScrollIndicator = false
         table.translatesAutoresizingMaskIntoConstraints = false
-        table.register(UITableViewCell.self, forCellReuseIdentifier: AppResources.TableWithCities.Labels.CityTableViewController.basicCellID)
-        table.register(UITableViewCell.self, forCellReuseIdentifier: AppResources.TableWithCities.Labels.CityTableViewController.geoCellID)
+        table.register(UITableViewCell.self, forCellReuseIdentifier: AppResources.TableWithCities.TextConstant.CityTableViewController.basicCellID)
+        table.register(UITableViewCell.self, forCellReuseIdentifier: AppResources.TableWithCities.TextConstant.CityTableViewController.geoCellID)
         table.dataSource = self
         table.delegate = self
         return table
@@ -95,7 +95,7 @@ final class CityTableViewController: UIViewController, ICityTableViewController 
 extension CityTableViewController {
     private func setupUI() {
         navigationController?.navigationBar.prefersLargeTitles = true
-        title = AppResources.TableWithCities.Labels.CityTableViewController.screenTitle
+        title = AppResources.TableWithCities.TextConstant.CityTableViewController.screenTitle
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -111,11 +111,12 @@ extension CityTableViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: AppResources.TableWithCities.Labels.CityTableViewController.geoCellID, for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: AppResources.TableWithCities.TextConstant.CityTableViewController.geoCellID, for: indexPath)
             cell.textLabel?.text = viewModel.geoCityData?.cityName ?? "Globe"
+            cell.imageView?.image = AppResources.TableWithCities.TextConstant.CityTableViewController.geoCellImage
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: AppResources.TableWithCities.Labels.CityTableViewController.basicCellID, for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: AppResources.TableWithCities.TextConstant.CityTableViewController.basicCellID, for: indexPath)
             cell.textLabel?.text = viewModel.tableData[indexPath.row - 1].name
             return cell
         }
