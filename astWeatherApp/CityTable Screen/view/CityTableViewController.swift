@@ -57,7 +57,9 @@ final class CityTableViewController: UIViewController, ICityTableViewController 
         
         viewModel.geoDataPublisher
             .sink { _ in
-                self.tableView.reloadData()
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
             }
             .store(in: &cancellables)
         
