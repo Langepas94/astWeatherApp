@@ -100,7 +100,7 @@
 		4443FFCA2AC5851B0079510A /* astWeatherApp */ = {
 			isa = PBXGroup;
 			children = (
-				444CEA552AE051CC00FBB273 /* FlowController */,
+				444CEA552AE051CC00FBB273 /* Coordinator */,
 				4488AE0D2ADFD9CA00912F66 /* Weather Screen */,
 				44E553E12AE7F0F2007741C1 /* CityTable Screen */,
 				443818852AF0F55B006A5170 /* Extensions */,
@@ -112,13 +112,13 @@
 			path = astWeatherApp;
 			sourceTree = "<group>";
 		};
-		444CEA552AE051CC00FBB273 /* FlowController */ = {
+		444CEA552AE051CC00FBB273 /* Coordinator */ = {
 			isa = PBXGroup;
 			children = (
 				44E553DF2AE7EC73007741C1 /* MainCoordinator.swift */,
 				44E553F42AE934E8007741C1 /* TableWithCitiesCoordinator.swift */,
 			);
-			path = FlowController;
+			path = Coordinator;
 			sourceTree = "<group>";
 		};
 		4488AE0D2ADFD9CA00912F66 /* Weather Screen */ = {
