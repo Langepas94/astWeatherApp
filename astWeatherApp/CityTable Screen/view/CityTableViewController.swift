@@ -85,7 +85,6 @@ final class CityTableViewController: UIViewController, ICityTableViewController 
         self.searchView = searchView
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        
     }
     
     required init?(coder: NSCoder) {

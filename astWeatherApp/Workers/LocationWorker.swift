@@ -66,6 +66,6 @@ extension LocationWorker: CLLocationManagerDelegate {
         requestGeoSwitcher()
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
+        print(error.localizedDescription)
     }
 }
