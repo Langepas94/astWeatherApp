@@ -114,7 +114,7 @@ extension CityTableViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: AppResources.TableWithCities.TextConstant.CityTableViewController.geoCellID, for: indexPath)
-            cell.textLabel?.text = viewModel.geoCityData?.cityName ?? "Globe"
+            cell.textLabel?.text = viewModel.geoCityData?.cityName ?? AppResources.TableWithCities.TextConstant.CityTableViewController.defaultCityName
             cell.imageView?.image = AppResources.TableWithCities.TextConstant.CityTableViewController.geoCellImage
             return cell
         } else {

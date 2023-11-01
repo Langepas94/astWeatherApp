@@ -93,6 +93,7 @@ struct AppResources {
                 static let geoCellID = "GeoCell"
                 static let screenTitle = "Favorites"
                 static let geoCellImage = UIImage(systemName: "location.fill")
+                static let defaultCityName = "Globe"
             }
         }
         // MARK: Constraints

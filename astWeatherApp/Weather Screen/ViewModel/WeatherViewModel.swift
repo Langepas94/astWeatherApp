@@ -32,15 +32,14 @@ final class WeatherViewModel: IMainScreenWeatherViewModel {
     
     private var locationWorker = LocationWorker()
     private var cancellables = Set<AnyCancellable>()
-    private var locations = (lat: 0.0, lon: 0.0)
     
     func loadWeather(type: FetchType) {
         switch type {
         case .city(city: let city):
             network(location: (city.coord?.lat ?? 0.0, city.coord?.lon ?? 0.0), geoPublisher: nil)
         case .geo:
-            locations = locationWorker.location
-            network(location: locations, geoPublisher: geoPublisher)
+            let location = locationWorker.location
+            network(location: location, geoPublisher: geoPublisher)
             self.updatePublisher.send(self.data ?? WeatherModel())
         }
     }
@@ -53,8 +52,7 @@ final class WeatherViewModel: IMainScreenWeatherViewModel {
                 case .finished:
                     break
                 }
-            }, receiveValue: { location in
-                self.locations = location
+            }, receiveValue: { _ in
                 self.loadWeather(type: .geo)
             })
             .store(in: &cancellables)
