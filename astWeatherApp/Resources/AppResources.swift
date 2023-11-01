@@ -73,7 +73,7 @@ struct AppResources {
     
     //MARK: - Table Screen
     struct TableWithCities {
-        struct Labels {
+        struct TextConstant {
             struct TabBar {
                 static let image = UIImage(systemName: "map.fill")
                 static let title = "Favorites"
@@ -92,7 +92,7 @@ struct AppResources {
                 static let basicCellID = "CityNameCell"
                 static let geoCellID = "GeoCell"
                 static let screenTitle = "Favorites"
-                
+                static let geoCellImage = UIImage(systemName: "location.fill")
             }
         }
         // MARK: Constraints

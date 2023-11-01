@@ -45,8 +45,8 @@ final class TableWithCitiesCoordinator: UINavigationController, IWeatherListFlow
     }
     
     private func setupUI() {
-        tabBarItem.image = AppResources.TableWithCities.Labels.TabBar.image
-        title = AppResources.TableWithCities.Labels.TabBar.title
+        tabBarItem.image = AppResources.TableWithCities.TextConstant.TabBar.image
+        title = AppResources.TableWithCities.TextConstant.TabBar.title
     }
     
     // MARK: Add to favorite
