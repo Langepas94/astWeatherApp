@@ -20,13 +20,12 @@ protocol ICityViewModel {
     func pressGeo()
     func setGeoCity(city: WeatherModel)
     func addToFavorite(city: City)
-    func readFavorite()
     func searchCities(query: String)
     func deleteCity(index: Int)
     func pressCity(city: City)
 }
 
-final class CityViewModel: ObservableObject, ICityViewModel {
+final class CityViewModel: ICityViewModel {
     
     //MARK: - Variables
     var geoDataPublisher: Published<WeatherModel?>.Publisher {$geoCityData}
@@ -85,6 +84,5 @@ final class CityViewModel: ObservableObject, ICityViewModel {
     // MARK: - Init
     init() {
         readFavorite()
-//        loadAllCities()
     }
 }
