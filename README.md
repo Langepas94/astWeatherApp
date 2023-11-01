@@ -1,6 +1,5 @@
-# Weather App
+# astWeatherApp
 
-ТЗ тестового задания:  
 ● MVVM  
 ● Combine  
 ● UserDefaults  
