@@ -37,10 +37,11 @@ final class WeatherViewModel: IMainScreenWeatherViewModel {
     func loadWeather(type: FetchType) {
         switch type {
         case .city(city: let city):
-            network(location: (city.coord?.lat ?? 0.0, city.coord?.lon ?? 0.0), publisher: updatePublisher)
+            network(location: (city.coord?.lat ?? 0.0, city.coord?.lon ?? 0.0), geoPublisher: nil)
         case .geo:
             locations = locationWorker.location
-                       network(location: locations, publisher: updatePublisher)
+            network(location: locations, geoPublisher: geoPublisher)
+            self.updatePublisher.send(self.data ?? WeatherModel())
         }
     }
     // MARK: Location
@@ -55,19 +56,19 @@ final class WeatherViewModel: IMainScreenWeatherViewModel {
             }, receiveValue: { location in
                 self.locations = location
                 self.loadWeather(type: .geo)
-                self.network(location: location, publisher: self.geoPublisher)
             })
             .store(in: &cancellables)
     }
     
     // MARK: Network
-    private func network(location: (lat: Double, lon: Double), publisher: PassthroughSubject<WeatherModel, Never>?) {
+    private func network(location: (lat: Double, lon: Double), geoPublisher: PassthroughSubject<WeatherModel, Never>?) {
         network.loadWeather(requestType: .forecast, requestWithData: .geoLocation(location.lat, location.lon))
             .sink { completion in
                 switch completion {
                 case .finished:
                     guard let data = self.data else { return }
-                    publisher?.send(data)
+                    self.updatePublisher.send(data)
+                    geoPublisher?.send(data)
                 case .failure(let error):
                     print(error.localizedDescription)
                 }

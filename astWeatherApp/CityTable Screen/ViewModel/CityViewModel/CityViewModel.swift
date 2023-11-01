@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+// p.s @published не вставляется протокол и такой выход
 protocol ICityViewModel {
     var updatePublisher: PassthroughSubject<WeatherModel, Never> { get }
     var reloadPublisher: PassthroughSubject<City, Never> { get }

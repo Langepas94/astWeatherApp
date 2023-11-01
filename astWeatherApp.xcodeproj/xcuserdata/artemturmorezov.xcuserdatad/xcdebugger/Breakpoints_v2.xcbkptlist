@@ -16,5 +16,69 @@
             categories = "Optimization Opportunities">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CF4B8354-26C8-4EB0-847A-385D49DADE28"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "astWeatherApp/Weather Screen/ViewModel/WeatherViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "loadLocation()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "CF4B8354-26C8-4EB0-847A-385D49DADE28 - b59e384754bbffcd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 ((lat: Swift.Double, lon: Swift.Double)) -&gt; () in astWeatherApp.WeatherViewModel.loadLocation() -&gt; ()"
+                  moduleName = "astWeatherApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artemturmorezov/Documents/astWeatherApp/astWeatherApp/Weather%20Screen/ViewModel/WeatherViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "200">
+               </Location>
+               <Location
+                  uuid = "CF4B8354-26C8-4EB0-847A-385D49DADE28 - b59e384754bbffea"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 ((lat: Swift.Double, lon: Swift.Double)) -&gt; () in astWeatherApp.WeatherViewModel.loadLocation() -&gt; ()"
+                  moduleName = "astWeatherApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/artemturmorezov/Documents/astWeatherApp/astWeatherApp/Weather%20Screen/ViewModel/WeatherViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "120">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EAB63889-7D98-456A-B007-302F46C9B000"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "astWeatherApp/Weather Screen/ViewModel/WeatherViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "44"
+            endingLineNumber = "44"
+            landmarkName = "loadWeather(type:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
