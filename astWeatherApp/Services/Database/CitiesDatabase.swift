@@ -57,6 +57,7 @@ class CitiesDatabase: IDataBase {
             }
         }
     }
+
     // MARK: Add Favorite
     func addToFavorite(city: City) {
         if let data = userDefaults.data(forKey: AppResources.DB.userDefaultsKey) {
@@ -97,6 +98,7 @@ class CitiesDatabase: IDataBase {
     }
     
     // MARK: Load All
+    // выглядит дико, но по итогу так быстрее чем постоянно работать с json и по памяти также занимает, решил из зол выбрать наименьшее.
     private func loadAllCities() -> Future<[City], Error> {
         Future { promise in
             DispatchQueue.global().async {

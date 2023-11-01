@@ -64,7 +64,7 @@ final class CityTableViewController: UIViewController, ICityTableViewController 
             .store(in: &cancellables)
         
         searchPublisher
-            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .debounce(for: 0.3, scheduler: DispatchQueue.main)
             .removeDuplicates()
             .compactMap({ $0 })
             .sink(receiveValue: { [weak self] (searchString: String) in
