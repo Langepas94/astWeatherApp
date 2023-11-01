@@ -1,11 +1,11 @@
 # Weather App
 
 ТЗ тестового задания:  
-● MVVM
-● Combine
-● UserDefaults
-● Snapkit
-
+● MVVM  
+● Combine  
+● UserDefaults  
+● Snapkit  
+  
 <p align="center">
   <img src="https://user-images.githubusercontent.com/108129792/279686565-9276f0ad-2047-4028-9546-3c9d28d9e0a3.png" width="180" title="Main screen">
   <img src="https://user-images.githubusercontent.com/108129792/279686577-b948320d-1176-406e-ab36-5f0bd93e2aeb.png" width="180" title="Search">
